@@ -6,7 +6,7 @@ from colorama import Fore, Style
 # -- Checks -- #
 def check_len(passwd: str):
     """Checks the length of the password"""
-    print(" * Checking length...")
+    print("   * Checking length...")
     length = len(passwd)
     if length >= 8:
         return 1, f"len:{length}"
@@ -15,9 +15,10 @@ def check_len(passwd: str):
     else:
         return 0, "len:0"
 
+
 def check_case(passwd: str):
     """Checks upper/lowercase usage"""
-    print(" * Checking characters...")
+    print("   * Checking characters...")
     uc = any(c.isupper() for c in passwd)
     lc = any(c.islower() for c in passwd)
     if uc and lc:
@@ -27,23 +28,26 @@ def check_case(passwd: str):
     else:
         return 0, "neither"
 
+
 def check_digit(passwd: str):
     """Checks for digits"""
-    print(" * Checking digits...")
+    print("   * Checking digits...")
     digits = [c for c in passwd if c.isdigit()]
     if digits:
         return 1, f"dig(s):{digits}"
     else:
         return 0, "none"
 
+
 def check_special(passwd: str):
     """Checks for special characters"""
-    print(" * Checking special characters...")
+    print("   * Checking special characters...")
     specials = [c for c in passwd if not c.isalnum()]
     if specials:
         return 1, f"sc:{specials}"
     else:
         return 0, "none"
+
 
 def rate_password(passwd: str):
     """Rates password based on different checks"""
