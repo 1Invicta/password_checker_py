@@ -154,7 +154,7 @@ def menu_update(clear: bool):
 
 def menu_info(clear: bool):
     display_header(clear)
-    print(f" <===[{Style.BRIGHT}Additional Information{Style.RESET_ALL}]===>\n")
+    display_menu_title(3)
     print(" * Welcome to 'password_checker'!")
     print(" * This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.")
     print(f" * For future updates, refer to this repository: {Style.BRIGHT}'{repo_link}'{Style.RESET_ALL}.")
