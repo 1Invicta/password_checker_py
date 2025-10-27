@@ -4,8 +4,9 @@
 
 Emphasis on 'basic': it checks for the length as well as the presence of upper/lowercase characters, digits and special characters in a password.
 
-* I'll be updating this tool every now and then on my free time.
+* Occasional updates
 
+I'll be updating this tool every now and then on my free time.
 The idea is that I make enough tools to eventually create a 'dev suite toolkit' of sorts, useful almost anywhere.
 
 * Python?
