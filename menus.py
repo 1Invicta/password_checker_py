@@ -32,7 +32,6 @@ password_menu_options = {
 # ===== Visuals ===== #
 menu_options_top = "\n #===============#"
 menu_options_bot = " #===============#"
-exit_msg = DebugMsg("error", "Closing", True, False)
 
 def build_box(length: int, topORbot: str):
     top = f"\n #{'='*length}#"
@@ -94,12 +93,12 @@ def list_password_diff_options():
     
     print(f"\n Current setting: [{write_current_setting(1)}]")
 
-    build_box(menu_options_top, 16, "t")
+    build_box(16, "t")
     for k, v in settings.items():
         print(f"  [{k}] - [{v}]")
     #print(f"  [9] - [{Fore.RED}BACK{' '*(8-len('BACK'))}{Fore.RESET}]") // may reuse in the future
     print(f"  [9] - [{Fore.RED}BACK{Fore.RESET}]")
-    build_box(menu_options_bot, 16, "b")
+    build_box(16, "b")
 
 
 def display_menu_title(menu_id: int):
@@ -120,8 +119,8 @@ def menu_main(clear: bool):
     display_menu_title(0)
     #print(" * Welcome to 'password_checker'!")
     #print(" * (This tool is still under development)")
-    DebugMsg("info", "Welcome to 'password_checker_py'!", False, True)
-    DebugMsg("warn", "NOTE: This tool is still under development", False, True)
+    DebugMsg("info", "Welcome to 'password_checker_py'!", True, True)
+    DebugMsg("warn", "NOTE: This tool is still under development", True, True)
     list_options(0)
 
 
@@ -170,9 +169,11 @@ def menu_update(clear: bool):
     display_latest_update(last_update, version, True)
     DebugMsg("added", "Added new password check features! ('Default', 'Advanced', 'Extreme')", False, True)
     DebugMsg("added", "Improved password check and rating system", False, True)
+    DebugMsg("added", "Implemented better error handling everywhere", False, True)
     DebugMsg("fix", "Fixed buggy 'utils.py' functions", False, True)
     DebugMsg("fix", "Fixed main menu bug: couldn't input '0' as valid menu", False, True)
     DebugMsg("fix", "Replaced redudant code with 'utils.py' helper functions", False, True)
+    DebugMsg("fix", "Fixed various bugs", False, True)
     DebugMsg("removed", "Removed confusing comments", False, True)
 
     DebugMsg("warn", f"NOTE: Refer to '{repo_link}' for future updates.", True, True)
@@ -182,9 +183,9 @@ def menu_update(clear: bool):
 def menu_info(clear: bool):
     display_header(clear)
     display_menu_title(3)
-    DebugMsg("info", "Welcome to 'password_checker'!", False, True)
-    DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
-    DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
+    DebugMsg("info", "Welcome to 'password_checker'!", True, True)
+    DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", True, True)
+    DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", True, True)
     #print(" This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.")
     #print(f" For future updates, refer to this repository: '{repo_link}'.")
     DebugMsg("warn", "NOTE: This tool is still under development", True, True)
@@ -233,8 +234,8 @@ def password_options():
             return 9
         
         else:
-            DebugMsg("warn", f"No available option given: Using default '[{write_current_setting(1)}]' settings!", True, True)
-            input(" Type Enter to continue...")
+            DebugMsg("warn", f"No available option given: Using '[{write_current_setting(1)}]' settings!", True, True)
+            DebugInput("System", "Type Enter to continue...", False, True)
             return 1
 
 

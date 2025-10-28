@@ -52,6 +52,17 @@ def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
         if wish_print: print(f" {'\n' if newline else ''} [{Fore.CYAN}pssw_chkr{Fore.RESET}] - {msg}")
         return f" {'\n' if newline else ''} [{Fore.CYAN}pssw_chkr{Fore.RESET}] - {msg}"
 
+exit_msg = DebugMsg("error", "Closing", True, False)
+
+
+def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
+    if type.lower() == 'tip':
+        if wish_print: input(f"{'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}")
+        return f" {'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}"
+    else:
+        if wish_print: input(f"{'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}{type}{Fore.RESET}] - {msg}")
+        return f" {'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}{type}{Fore.RESET}] - {msg}"
+
 
 def clr_scr():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -93,3 +104,8 @@ def inner_color_brackets(text: str, color=Fore.WHITE, style=Style.NORMAL) -> str
         return PrintColor(text, color, style)
     return f"[{PrintColor(text[1:-1], color, style)}]"
 
+
+def QuitTool():
+    clr_scr()
+    print(exit_msg)
+    return
