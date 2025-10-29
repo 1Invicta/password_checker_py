@@ -7,7 +7,7 @@
 
 # --- Libs --- #
 import os, random
-from time import sleep # will make it optional in ver-0.8
+from time import sleep # will make it optional in future patch
 from colorama import Fore, Style
 
 # --- Mods --- #
