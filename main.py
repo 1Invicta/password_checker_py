@@ -1,24 +1,25 @@
 ### [main] ###
 
-## /dev NOTES/ ##
-# (main.py) main loop => menu wrapper
-# (menus.py) menus handler => each menu has its own loop
+## /_NOTES/ ##
+# (main.py) main loop => wrapper for everything
+# (menus.py) menus handler => each menu has its own submenu
+# (changelog.py) stores all past updates
 # (checker.py) password check system
 # (utils.py) helper and debugging functions
 
-# FUTURE (for ver-0.8+):
-# - change function names!! they're super confusing
-# - store last update notes and only display latest
+# FUTURE (ver-0.3.2):
+# [/] - improve password checks, make them more rigorous
 
 # --- Mods --- #
-from menus import menu_main, menu_info, menu_update, choose_menu, password_checker, clr_scr, exit_msg
-from utils import DebugMsg, QuitTool
+from menus import *
+from utils import DebugMsg, QuitTool, exit_msg
 
 # --- Main --- #
 def main():
     try:
         while True:
-            menu_main(True)
+            # main loop
+            display_main_menu(True)
             wish_menu = choose_menu()
 
             if wish_menu == 0:
@@ -26,34 +27,15 @@ def main():
                 continue
 
             elif wish_menu == 1:
-                # password menu
-                password_checker(True)
+                display_password_checker_menu(True)
 
             elif wish_menu == 2:
-                # updates menu
-                while True:
-                    # sub-menu loop
-                    menu_update(True)
-                    if choose_menu() == 9:
-                        # exit sub-menu
-                        break
-                    else:
-                        # stay in current menu
-                        DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-                        input("Type Enter to continue...")
+                # changelog menu
+                display_changelog_submenu()
 
             elif wish_menu == 3:
                 # info menu
-                while True:
-                    # sub-menu loop
-                    menu_info(True)
-                    if choose_menu() == 9:
-                        # exit sub-menu
-                        break
-                    else:
-                        # stay in current menu
-                        DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-                        input("Type Enter to continue...")
+                display_help_submenu()
 
             elif wish_menu == 9:
                 # quit
