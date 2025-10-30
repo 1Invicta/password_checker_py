@@ -1,4 +1,4 @@
-# password_checker
+# password_checker_py
 ## Info
 * Welcome to a basic password checker!
 
