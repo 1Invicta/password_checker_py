@@ -1,4 +1,4 @@
-#___ [checks] ___#
+#______ [checks] _____#
 
 
 # =================== #
@@ -26,7 +26,7 @@ file2_dir = data_dir + r"\100k-most-used-passwords-NCSC.txt"
 # ==================== #
 
 def check_len(passwd: str, type=0):
-    """Checks the length of the password"""
+    """Checks the length of the password."""
     sleep(random.random())
     print("    * Checking length...")
     sleep(random.random())
@@ -40,7 +40,7 @@ def check_len(passwd: str, type=0):
 
 
 def check_case(passwd: str, type=0):
-    """Checks upper/lowercase usage"""
+    """Checks for upper and lowercases in the password."""
     sleep(random.random())
     print("    * Checking characters...")
     sleep(random.random())
@@ -55,7 +55,7 @@ def check_case(passwd: str, type=0):
 
 
 def check_digit(passwd: str, type=0):
-    """Checks for digits"""
+    """Checks for digits in the password."""
     sleep(random.random())
     print("    * Checking digits...")
     sleep(random.random())
@@ -67,7 +67,7 @@ def check_digit(passwd: str, type=0):
 
 
 def check_special(passwd: str, type=0):
-    """Checks for special characters"""
+    """Checks for special characters in the password."""
     sleep(random.random())
     print("    * Checking special characters...")
     sleep(random.random())
@@ -79,6 +79,7 @@ def check_special(passwd: str, type=0):
 
 
 def check_seclist(passwd: str, type: int=0):
+    """Checks if the password is present in one of the wordlists (currently 10k or 100k)."""
     if type == 2:
         # 10k check => common check
         print("    * Comparing to 10k most common passwords...")
@@ -107,7 +108,7 @@ def check_seclist(passwd: str, type: int=0):
 # ==================== #
 
 def rate_password(passwd: str, check_list_arg=0):
-    """Rates password based on different checks"""
+    """Rates the password based on various checks."""
     checks = [check_len, check_case, check_digit, check_special, check_seclist]
     total = sum(func(passwd, check_list_arg) for func in checks)
 

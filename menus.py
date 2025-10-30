@@ -10,7 +10,7 @@ from colorama import Fore, Style
 
 # --- Mods --- #
 from utils import *
-from checker import rate_password
+from checks import rate_password
 from data.changelog import changelog, repo_link
 
 # --- Info --- #
@@ -38,6 +38,7 @@ changelog_menu_options = {
 }
 
 
+
 # =================== #
 # ===== Visuals ===== #
 # =================== #
@@ -45,28 +46,50 @@ changelog_menu_options = {
 menu_options_top = "\n #===============#"
 menu_options_bot = " #===============#"
 
-def build_box(topORbot: str, length: int=15):
+def build_box(topORbot: str, length: int=15, wish_print: bool=True):
     """Builds custom-sized options box. Defaults to a size of 15."""
     top = f"\n #{'='*length}#"
     bot = f" #{'='*length}#"
     
     if topORbot.lower().startswith('t'):
-        print(top)
-    else: print(bot)
+        if wish_print:
+            print(top)
+        return top
+    else:
+        if wish_print:
+            print(bot)
+        return bot
 
 
-def display_header(clear: bool):
+def display_global_header(clear: bool):
     """Displays default header."""
     # needs improvement
     # pain to deal with. maybe ver-1.0?
     if clear: clr_scr()
     print(
-        f" {header_box}\n"
+        f" {build_box(header_box, length=26, wish_print=False)}\n"
         f"  | [{Fore.LIGHTMAGENTA_EX}password_checker_py{Style.RESET_ALL}]    |\n"
         f"  | [{Fore.LIGHTGREEN_EX}ver-{LATEST_VERSION}{Style.RESET_ALL}] - {LATEST_UPDATE_DATE} |\n"
         f"  |{Fore.LIGHTWHITE_EX}{Style.BRIGHT} Scripted by {Style.RESET_ALL}[{Fore.CYAN}{Style.BRIGHT}1Invicta{Style.RESET_ALL}]   |\n"
-        f" {header_box}"
+        f" {build_box(header_box, length=26, wish_print=False)}"
     )
+
+
+def display_menu_title(menu_id: int, override: str=''):
+    """Displays the title for a given menu."""
+    titles = {
+        0: "/Home",
+        1: "/password_checker_py",
+        2: "/Changelog",
+        3: "/Help"
+    }
+    title = titles.get(menu_id, "/")
+    print(f"\n<===[{title}]===>" if override=='' else f"\n<===[{str(override)}]===>")
+
+
+def render_menu_header(menu_id: int):
+    display_global_header(True)
+    display_menu_title(menu_id)
 
 
 def choose_menu(submenu: str=""):
@@ -120,45 +143,27 @@ def list_password_diff_options():
     build_box('b', 16)
 
 
-def display_menu_title(menu_id: int, override: str=''):
-    """Displays the title for a given menu."""
-    titles = {
-        0: "/Home",
-        1: "/password_checker_py",
-        2: "/Changelog",
-        3: "/Help"
-    }
-    title = titles.get(menu_id, "/")
-    print(f"\n<===[{title}]===>" if override=='' else f"\n<===[{str(override)}]===>")
-
-
 
 # =================== #
 # === Extractions === #
 # =================== #
 
-def retry_query():
-    while True:
-        user_input = input("\n<CMD/password_checker_py>: ")
-
-        if user_input == "0":
-            return 0
-        
-        elif user_input == "1":
-            clr_scr()
-            return 1
-
-        elif user_input == "9":
-            clr_scr()
-            DebugMsg("error", "Closing", True, True)
-            return 9
-        
-        else:
-            DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
-            input(" Type Enter to continue...")
+# for password menu
+def write_current_setting(setting: int, wish_print: bool=False):
+    """Returns currently selected check mode for password checking."""
+    if setting == 1:
+        if wish_print: print(f"\n Current setting: [{PrintColor("Default", Fore.LIGHTGREEN_EX)}]")
+        return PrintColor("Default", Fore.LIGHTGREEN_EX)
+    elif setting == 2:
+        if wish_print: print(f"\n Current setting: [{PrintColor("Advanced", Fore.LIGHTBLUE_EX)}]")
+        return PrintColor("Advanced", Fore.LIGHTBLUE_EX)
+    elif setting == 3:
+        if wish_print: print(f"\n Current setting: [{PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)}]")
+        return PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)
 
 
 def password_options():
+    """Handles input choice for password check mode."""
     list_password_diff_options()
 
     while True:
@@ -181,21 +186,71 @@ def password_options():
             return 9
         
         else:
-            DebugMsg("warn", f"No available option given: Using '[{write_current_setting(1)}]' settings!", True, True)
+            DebugMsg("warn", f"No available option given: Using [{write_current_setting(1)}] settings!", True, True)
             DebugInput("System", "Type Enter to continue...", False, True)
             return 1
 
 
-def write_current_setting(setting: int):
-    if setting == 1:
-        return PrintColor("Default", Fore.LIGHTGREEN_EX)
-    elif setting == 2:
-        return PrintColor("Advanced", Fore.LIGHTBLUE_EX)
-    elif setting == 3:
-        return PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)
+def get_password_or_command():
+    """Returns a tuple (command, password) from user input."""
+    userinput = input("\n<CMD/password_checker_py>: ").strip()
+    if not userinput:
+        DebugMsg("warn", "Empty input. Please enter a password.", False, True)
+        input("Press Enter to retry...")
+        return None, None
+    
+    # userinput is either command or password
+    try:
+        return int(userinput), None
+    except ValueError:
+        return None, userinput
 
 
+def show_password_results(password: str, check_setting):
+    """Displays password rating and advice based on user iinput."""
+    render_menu_header(1)
+    write_current_setting(check_setting, True)
+    print(f"\n  <===[{PrintColor("Checking password", Fore.YELLOW, Style.BRIGHT)}]===>")
+
+    rating, desc, score = rate_password(password, check_setting)
+
+    print(f"\n  <===[{PrintColor("RESULTS", Fore.GREEN, Style.BRIGHT)}]===>")
+    print(f"   => This password is {desc}.")
+    print(f"   => Rating [{score}]")
+
+    messages = {
+        1: "Congratulations! Your password is safe.",
+        0: "Your password is alright, but you can make it stronger.",
+        -1: "Your password is weak! Make it stronger, add digits and special characters."
+    }
+    print(f"\n {messages.get(rating, '')}")
+
+
+def retry_query():
+    """Queries user to retry for a password check."""
+    while True:
+        user_input = input("\n<CMD/password_checker_py>: ")
+
+        if user_input == "0":
+            return 0
+        
+        elif user_input == "1":
+            clr_scr()
+            return 1
+
+        elif user_input == "9":
+            clr_scr()
+            DebugMsg("error", "Closing", True, True)
+            return 9
+        
+        else:
+            DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
+            input(" Type Enter to continue...")
+
+
+# for changelog menu
 def show_updates(latest_only=True, count=3):
+    """Display 3 latest updates from changelog, optionally as many as wished."""
     # reverse update list order
     ordered = list(reversed(changelog))
     updates_to_show = ordered[:count] if latest_only else ordered
@@ -213,10 +268,9 @@ def show_updates(latest_only=True, count=3):
 
 def display_main_menu(clear: bool):
     """Displays main menu content."""
-    display_header(clear)
+    display_global_header(clear)
     display_menu_title(0)
-    #print(" * Welcome to 'password_checker'!")
-    #print(" * (This tool is still under development)")
+
     DebugMsg("info", "Welcome to 'password_checker_py'!", True, True)
     DebugMsg("warn", "NOTE: This tool is still under development", True, True)
     list_options(0, True, exclude_key=0)
@@ -224,7 +278,7 @@ def display_main_menu(clear: bool):
 
 def display_changelog_menu(clear: bool):
     """Displays changelog menu content."""
-    display_header(clear)
+    display_global_header(clear)
     display_menu_title(2)
     
     # show version and last update date
@@ -246,107 +300,79 @@ def display_changelog_menu(clear: bool):
 
 def display_help_menu(clear: bool):
     """Displays info menu content."""
-    display_header(clear)
+    display_global_header(clear)
     display_menu_title(3)
+    
+    # menu content
     DebugMsg("info", "Welcome to 'password_checker'!", True, True)
     DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
     DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
-    #print(" This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.")
-    #print(f" For future updates, refer to this repository: '{repo_link}'.")
+
     DebugMsg("warn", "NOTE: This tool is still under development", True, True)
 
     list_options(3, True)
 
 
 def display_password_checker_menu(clear: bool):
-    """Password checking loop."""
-    # store user's chosen settting
+    """Displays password checker menu content."""
     check_setting = None
 
     while True:
         try:
-            display_header(True)
-            display_menu_title(1)
-            
-            # check if setting not yet chosen
+            render_menu_header(1)
+
+            # choose check mode if not selected
             if check_setting is None:
                 check_setting = password_options()
                 if check_setting == 9:
                     clr_scr()
                     return
             
-            display_header(True)
-            display_menu_title(1)
-
-            print(f"\n Current setting: [{write_current_setting(check_setting)}]")
+            # clear mode selection
+            render_menu_header(1)
+            write_current_setting(check_setting, True)
             DebugMsg("tip", "Type your password!", True, True)
             list_options(1, True, 1)
 
-            userinput = input("\n<CMD/password_checker_py>: ")
-
-            try:
-                converted_input = int(userinput)
-            
-                if converted_input == 0:
-                    display_main_menu(True)
-                    break
-                elif converted_input == 9:
-                    clr_scr()
-                    check_setting = None
-                    continue
-                
-            except ValueError:
-                password = userinput
-            
-            if not userinput.strip():
-                DebugMsg("warn", "Empty input. Please enter a password.", False, True)
-                input("Press Enter to retry...")
+            cmd, password = get_password_or_command()
+            if cmd is None and password is None:
                 continue
-            
-            # redraw for clarity
-            display_header(True)
-            display_menu_title(1)
 
-            print(f"\n  <===[{PrintColor("Checking password", Fore.YELLOW, Style.BRIGHT)}]===>")
-            
-            rating, desc, score = rate_password(password, check_setting)
-            
-            print(f"\n  <===[{PrintColor("RESULTS", Fore.GREEN, Style.BRIGHT)}]===>")
-            print(f"   => This password is {desc}.")
-            print(f"   => Rating: [{score}]")
-
-            messages = {
-                1: "Congratulations! Your password is safe.",
-                0: "Your password is alright, but you can make it stronger.",
-                -1: "Your password is weak! Make it longer, add digits and special characters."
-            }
-            print(f"\n {messages.get(rating, '')}")
-            
-            list_options(1, True)
-            choice = retry_query()
-
-            if choice == 0:
+            # command handling
+            if cmd == 0:
                 display_main_menu(True)
                 break
-            elif choice == 1:
+            elif cmd == 9:
                 clr_scr()
+                check_setting = None # reset check mode + go back
                 continue
-            elif choice == 9:
-                clr_scr()
-                check_setting = None
-                continue
+
+            # password checking and result display
+            if password:
+                show_password_results(password, check_setting)
+                list_options(1, True)
+                choice = retry_query()
+
+                if choice == 0:
+                    display_main_menu(True)
+                    break
+                elif choice == 1:
+                    clr_scr()
+                    continue
+                elif choice == 9:
+                    clr_scr()
+                    check_setting = None # go back = reset check mode
+                    continue
             
-            # fallback: reset to default case
+            # reset to default
             clr_scr()
             check_setting = None
-
-        except Exception:
-            DebugMsg("error", "An unexpected error occured. Returning to password checker.", False, True)
-            continue
-
-    clr_scr()
         
-
+        except Exception:
+            DebugMsg("error", "An unexpected error occurred. Returning to password checker.", False, True)
+            continue
+    
+    clr_scr()
 
 
 # =================== #
@@ -363,7 +389,7 @@ def display_changelog_submenu():
         
         if choice == 1:
             # display full changelog
-            display_header(True)
+            display_global_header(True)
 
             display_menu_title(2, "Full Changelog")
             show_updates(latest_only=False)

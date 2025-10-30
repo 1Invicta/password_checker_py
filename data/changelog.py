@@ -1,4 +1,4 @@
-#___ [updates] ___ #
+#_____ [updates] ____ #
 
 
 # =================== #
@@ -93,6 +93,18 @@ changelog = [
             ("fix", "Fixed various argument-handling issues in menu functions"),
             ("fix", "Renamed several functions for better clarity and consistency"),
             ("removed", "Removed the large, redundant 'updates' list from a function (finally)")
+        ]
+    },
+    {
+        # Added/Fixed function comments
+        "date": "30/10/2025",
+        "version": "0.3.2",
+        "changes": [
+            ("added", "Added missing function comments and fixed existing ones"),
+            ("added", "Implemented various quality-of-life improvements"),
+            ("fix", "Replaced manual print statements with utility functions"),
+            ("fix", "Reordered functions for better readability"),
+            ("removed", "Removed redundant comments")
         ]
     }
 ]

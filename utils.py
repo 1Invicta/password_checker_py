@@ -1,4 +1,4 @@
-#___ [utils] ___ #
+#______ [utils] _____ #
 
 
 # =================== #
@@ -19,11 +19,16 @@ header_box = " #--------------------------#"
 # =================== #
 
 def PrintColor(text: str, color=Fore.WHITE, style=Style.NORMAL):
-    """Custom print with Fore and Style using colorama."""
+    """Custom print with Fore and Style using 'colorama'.\n* text: Text to color\n* color: Foreground color\n* style: Text style (BRIGHT, NORMAL or DIM)"""
     return f"{color}{style}{text}{Style.RESET_ALL}"
 
 
 def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
+    """Display debug message.
+    \nTypes: 'error', 'warn', 'added', 'fix', 'removed', 'updated', 'tip' and 'info'.
+    \n* newline: Insert newline before debug input.
+    \n* wish_print: True = prints result | False = returns value (Useful for formatting)."""
+
     if type.lower() == 'error':
         if wish_print: print(f" {'\n ' if newline else ''} [{Fore.RED}!{Fore.RESET}] - {msg}")
         return f" {' \n ' if newline else ''} [{Fore.RED}!{Fore.RESET}] - {msg}"
@@ -62,6 +67,9 @@ def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
 
 
 def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
+    """Display debug input.\n* Types: 'tip' and 'warn'\n* newline: Insert newline before debug input
+    \n* wish_print: True prints the result and returns the value; False returns the value"""
+
     if type.lower() == 'tip':
         if wish_print: input(f"{'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}"
@@ -76,6 +84,7 @@ def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
 
 
 def clr_scr():
+    """Clears terminal using 'os' library.\nAdapts to user OS."""
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
@@ -119,6 +128,7 @@ exit_msg = DebugMsg("error", "Closing", True, False)
 
 
 def QuitTool():
+    """Quits program."""
     clr_scr()
     print(exit_msg)
     return
