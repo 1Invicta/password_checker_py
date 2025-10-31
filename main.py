@@ -13,9 +13,8 @@
 
 
 
-# FUTURE (ver-0.3.2):
-# [/] - improve password checks, make them more rigorous
-# [/] - refactor 'display_password_checker_menu' function!!!
+# FUTURE (ver-0.3.4):
+# [/] - implement entropy-based checks
 
 # --- Mods --- #
 from menus import *

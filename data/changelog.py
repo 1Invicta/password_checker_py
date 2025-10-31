@@ -106,5 +106,15 @@ changelog = [
             ("fix", "Reordered functions for better readability"),
             ("removed", "Removed redundant comments")
         ]
+    },
+    {
+        # Normalized rating results
+        "date": "31/10/2025",
+        "version": "0.3.3",
+        "changes":
+        [
+            ("fix", "Improved wordlist check performance"),
+            ("fix", "Improved consistency in password check results")
+        ]
     }
 ]
