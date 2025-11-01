@@ -196,7 +196,7 @@ def get_password_or_command():
     userinput = input("\n<CMD/password_checker_py>: ").strip()
     if not userinput:
         DebugMsg("warn", "Empty input. Please enter a password.", False, True)
-        input("Press Enter to retry...")
+        DebugInput("tip", "Press Enter to retry...", False, True)
         return None, None
     
     # userinput is either command or password
@@ -245,7 +245,11 @@ def retry_query():
         
         else:
             DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
-            input(" Type Enter to continue...")
+            DebugInput("tip", "Type Enter to continue...", False, True)
+            clr_scr()
+            render_menu_header(1)
+            write_current_setting(1)
+            list_options(1, True)
 
 
 # for changelog menu
@@ -286,10 +290,10 @@ def display_changelog_menu(clear: bool):
     DebugMsg("info", f"Latest update on {LATEST_UPDATE_DATE}", False, True)
 
     # show recent updates
-    show_updates(latest_only=True, count=3)
+    show_updates(latest_only=True, count=2)
     
     # footer info
-    DebugMsg("warn", "NOTE: Only the 3 most recent updates are shown here", True, True)
+    DebugMsg("warn", "NOTE: Only the 2 most recent updates are shown here", True, True)
     DebugMsg("warn", f"Refer to '{repo_link}' for the full changelog", True, True)
     
     # options
@@ -404,7 +408,7 @@ def display_changelog_submenu():
         else:
             # stay in current menu
             DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-            input("Type Enter to continue...")
+            DebugInput("tip", "Type Enter to continue...", False, True)
 
 
 def display_help_submenu():
@@ -422,6 +426,6 @@ def display_help_submenu():
         else:
             # stay in current menu
             DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-            input("Type Enter to continue...")
+            DebugInput("tip", "Type Enter to continue...", False, True)
 
 

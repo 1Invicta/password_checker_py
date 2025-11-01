@@ -6,11 +6,11 @@
 # =================== #
 
 # --- Libs --- #
-import os, random
+import os, math, string
 from colorama import Fore, Style
 
 # --- Mods --- #
-from utils import DebugMsg, PrintColor
+from utils import DebugMsg, DebugInput, PrintColor
 
 # - Wordlists - #
 current_dir = os.getcwd()
@@ -29,6 +29,8 @@ with open(file2_dir, 'r', encoding='utf-8') as f:
 # ====== Checks ====== #
 # ==================== #
 
+class Checks():
+    pass
 def check_len(passwd: str, type=0):
     """Checks the length of the password."""
     print("    * Checking length...")
@@ -87,6 +89,56 @@ def check_seclist(passwd: str, type: int=0):
     else:
         return 0
 
+
+def check_entropy(passwd: str):
+    """Uses Shannon's Theorem"""
+    # character sets
+    lc = string.ascii_lowercase
+    uc = string.ascii_uppercase
+    d = string.digits
+    s = string.punctuation
+
+    # character pool
+    char_pool = set()
+    for c in passwd:
+        if c in lc:
+            char_pool.update(lc)
+        elif c in uc:
+            char_pool.update(uc)
+        elif c in d:
+            char_pool.update(d)
+        elif c in s:
+            char_pool.update(s)
+        else:
+            # handle other characters
+            char_pool.update(c)
+
+    # count potential character set (R)
+    R = 0
+    if any(c in lc for c in passwd):
+        R += len(lc)
+    elif any(c in uc for c in passwd):
+        R += len(uc)
+    elif any(c in d for c in passwd):
+        R += len(d)
+    elif any(c in s for c in passwd):
+        R += len(s)
+    
+    # fallback to unique characters
+    if R == 0:
+        R = len(set(passwd))
+    
+    L = len(passwd)
+
+    if R == 0:
+        return 0
+    
+    entropy = L * math.log2(R)
+
+    return round(entropy, 2)
+
+#test = input("[TEST] Enter password: ")
+#print(f"Password '{test}' has {check_entropy(test)} bits of entropy.")
 
 
 # ==================== #

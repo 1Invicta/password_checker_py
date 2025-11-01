@@ -63,7 +63,7 @@ def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
 
     else:
         if wish_print: print(f" {'\n ' if newline else ''} [{Fore.CYAN}pssw_chkr{Fore.RESET}] - {msg}")
-        return f" {'\n ' if newline else ''} [{Fore.CYAN}pssw_chkr{Fore.RESET}] - {msg}"
+        return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}System{Fore.RESET}] - {msg}"
 
 
 def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
@@ -71,15 +71,15 @@ def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
     \n* wish_print: True prints the result and returns the value; False returns the value"""
 
     if type.lower() == 'tip':
-        if wish_print: input(f"{'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}")
+        if wish_print: input(f" {'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}TIP{Fore.RESET}] - {msg}"
     
     elif type.lower() == 'warn':
-        if wish_print: input(f"{'\n' if newline else ''} [{Fore.YELLOW}!{Fore.RESET}] - {msg}")
+        if wish_print: input(f" {'\n' if newline else ''} [{Fore.YELLOW}!{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.YELLOW}!{Fore.RESET}] - {msg}"
 
     else:
-        if wish_print: input(f"{'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}{type}{Fore.RESET}] - {msg}")
+        if wish_print: input(f" {'\n' if newline else ''} [{Fore.LIGHTYELLOW_EX}{type}{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}{type}{Fore.RESET}] - {msg}"
 
 

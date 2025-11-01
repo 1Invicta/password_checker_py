@@ -58,7 +58,7 @@ def main():
             else:
                 # consider as stay
                 DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-                input("Type Enter to continue...")
+                DebugInput("tip", "Type Enter to continue...", False, True)
                 continue
     except:
         QuitTool()
