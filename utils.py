@@ -61,6 +61,10 @@ def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
         if wish_print: print(f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}INFO{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}INFO{Fore.RESET}] - {msg}"
 
+    elif type.lower() == 'load-ok':
+        if wish_print: print(f" {'\n ' if newline else ''} [{Fore.GREEN}OK{Fore.RESET}] - {msg}")
+        return f" {'\n ' if newline else ''} [{Fore.GREEN}OK{Fore.RESET}] - {msg}"
+    
     else:
         if wish_print: print(f" {'\n ' if newline else ''} [{Fore.CYAN}pssw_chkr{Fore.RESET}] - {msg}")
         return f" {'\n ' if newline else ''} [{Fore.LIGHTYELLOW_EX}System{Fore.RESET}] - {msg}"
@@ -85,19 +89,31 @@ def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
 
 def clr_scr():
     """Clears terminal using 'os' library.\nAdapts to user OS."""
-    os.system('cls' if os.name == 'nt' else 'clear')
+    try:
+        os.system('cls' if os.name == 'nt' else 'clear')
+    except:
+        DebugMsg("error", "An error occurred: 'clr_scr', line 90 at 'utils.py'.", True, True)
 
 
 def cmd_title(title: str):
-    os.system(f"title {title}")
+    try:
+        os.system(f"title {title}")
+    except:
+        DebugMsg("error", "An error occurred: 'cmd_title', line 98 at 'utils.py'.", True, True)
 
 
 def display_latest_update(lastUpdate: str, version: str, isLatestUpdate: bool):
-    print(f"\n * {lastUpdate} - [{Fore.LIGHTGREEN_EX if isLatestUpdate else Fore.GREEN}ver-{version}{Style.RESET_ALL}]")
+    try:
+        print(f"\n * {lastUpdate} - [{Fore.LIGHTGREEN_EX if isLatestUpdate else Fore.GREEN}ver-{version}{Style.RESET_ALL}]")
+    except:
+        DebugMsg("error", "An error occurred: 'display_latest_update', line 105 at 'utils.py'.", True, True)
 
 
 def display_current_version(current_ver: str):
-    print(f"\n <Current>: [{PrintColor(f"version-{current_ver}", Fore.GREEN, Style.BRIGHT)}]")
+    try:
+        print(f"\n <Current>: [{PrintColor(f"version-{current_ver}", Fore.GREEN, Style.BRIGHT)}]")
+    except:
+        DebugMsg("error", "An error occurred: 'display_current_version', line 112 at 'utils.py'.", True, True)
 
 
 def strip_ansi(text: str) -> str:

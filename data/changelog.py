@@ -116,5 +116,16 @@ changelog = [
             ("fix", "Improved wordlist check performance"),
             ("fix", "Improved consistency in password check results")
         ]
+    },
+    {
+        # Worked on password checks
+        "date": "01/11/2025",
+        "version": "0.3.4",
+        "changes":
+        [
+            ("added", "Added entropy validation for enhanced reliability"),
+            ("fix", "Rating system adjustments and optimized performance checks"),
+            ("fix", "Improved stability with enhanced error handling")
+        ]
     }
 ]

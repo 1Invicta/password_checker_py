@@ -60,7 +60,7 @@ def main():
                 DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
                 DebugInput("tip", "Type Enter to continue...", False, True)
                 continue
-    except:
+    except KeyboardInterrupt:
         QuitTool()
 
 
