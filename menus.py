@@ -48,48 +48,64 @@ menu_options_bot = " #===============#"
 
 def build_box(topORbot: str, length: int=15, wish_print: bool=True):
     """Builds custom-sized options box. Defaults to a size of 15."""
-    top = f"\n #{'='*length}#"
-    bot = f" #{'='*length}#"
+    try:
+        top = f"\n #{'='*length}#"
+        bot = f" #{'='*length}#"
+        
+        if topORbot.lower().startswith('t'):
+            if wish_print:
+                print(top)
+            return top
+        else:
+            if wish_print:
+                print(bot)
+            return bot
     
-    if topORbot.lower().startswith('t'):
-        if wish_print:
-            print(top)
-        return top
-    else:
-        if wish_print:
-            print(bot)
-        return bot
+    except EOFError:
+        DebugMsg("error", f"An unexpected error occurred: 'build_box', line 49 at 'menus.py'.", True, True)
 
 
 def display_global_header(clear: bool):
     """Displays default header."""
     # needs improvement
     # pain to deal with. maybe ver-1.0?
-    if clear: clr_scr()
-    print(
-        f" {build_box(header_box, length=26, wish_print=False)}\n"
-        f"  | [{Fore.LIGHTMAGENTA_EX}password_checker_py{Style.RESET_ALL}]    |\n"
-        f"  | [{Fore.LIGHTGREEN_EX}ver-{LATEST_VERSION}{Style.RESET_ALL}] - {LATEST_UPDATE_DATE} |\n"
-        f"  |{Fore.LIGHTWHITE_EX}{Style.BRIGHT} Scripted by {Style.RESET_ALL}[{Fore.CYAN}{Style.BRIGHT}1Invicta{Style.RESET_ALL}]   |\n"
-        f" {build_box(header_box, length=26, wish_print=False)}"
-    )
+    try:
+        if clear: clr_scr()
+        print(
+            f" {build_box(header_box, length=26, wish_print=False)}\n"
+            f"  | [{Fore.LIGHTMAGENTA_EX}password_checker_py{Style.RESET_ALL}]    |\n"
+            f"  | [{Fore.LIGHTGREEN_EX}ver-{LATEST_VERSION}{Style.RESET_ALL}] - {LATEST_UPDATE_DATE} |\n"
+            f"  |{Fore.LIGHTWHITE_EX}{Style.BRIGHT} Scripted by {Style.RESET_ALL}[{Fore.CYAN}{Style.BRIGHT}1Invicta{Style.RESET_ALL}]   |\n"
+            f" {build_box(header_box, length=26, wish_print=False)}"
+        )
+
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'display_global_header', line 68 at 'menus.py'.", True, True)
 
 
 def display_menu_title(menu_id: int, override: str=''):
     """Displays the title for a given menu."""
-    titles = {
-        0: "/Home",
-        1: "/password_checker_py",
-        2: "/Changelog",
-        3: "/Help"
-    }
-    title = titles.get(menu_id, "/")
-    print(f"\n<===[{title}]===>" if override=='' else f"\n<===[{str(override)}]===>")
+    try:
+        titles = {
+            0: "/Home",
+            1: "/password_checker_py",
+            2: "/Changelog",
+            3: "/Help"
+        }
+        title = titles.get(menu_id, "/")
+        print(f"\n<===[{title}]===>" if override=='' else f"\n<===[{str(override)}]===>")
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'display_menu_title', line 86 at 'menus.py'.", True, True)
 
 
 def render_menu_header(menu_id: int):
-    display_global_header(True)
-    display_menu_title(menu_id)
+    try:
+        display_global_header(True)
+        display_menu_title(menu_id)
+
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'render_menu_header', line 102 at 'menus.py'.", True, True)
 
 
 def choose_menu(submenu: str=""):
@@ -102,52 +118,58 @@ def choose_menu(submenu: str=""):
             return int(user_input)
         except ValueError:
             return 0
-    
-    except KeyboardInterrupt:
-        QuitTool()
+
     except EOFError:
-        DebugMsg("error", "An unexpected error occurred: 'choose_menu', line 95 at 'menus.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'choose_menu', line 111 at 'menus.py'.", True, True)
         return 0
 
 
 def list_options(menu_id: int, buildBox: bool, exclude_key: int=-1):
     """Displays available menus for the selected menu."""
-    if buildBox: build_box('top')
+    try:
+        if buildBox: build_box('top')
 
-    options = (
-        menu_options if menu_id == 0 else
-        password_menu_options if menu_id == 1 else
-        changelog_menu_options if menu_id == 2 else
-        {9: "Back"}
-    )
+        options = (
+            menu_options if menu_id == 0 else
+            password_menu_options if menu_id == 1 else
+            changelog_menu_options if menu_id == 2 else
+            {9: "Back"}
+        )
 
-    for k, v in options.items():
-        if k == exclude_key: # skip said (key, value)
-            continue
+        for k, v in options.items():
+            if k == exclude_key: # skip said (key, value)
+                continue
 
-        color = Fore.RED if k == 9 else Fore.WHITE
-        print(f"  [{k}] - {PrintColor(v, color)}")
+            color = Fore.RED if k == 9 else Fore.WHITE
+            print(f"  [{k}] - {PrintColor(v, color)}")
+        
+        if buildBox: build_box('bot')
     
-    if buildBox: build_box('bot')
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'list_options', line 127 at 'menus.py'.", True, True)
 
 
-def list_password_diff_options():
+def list_password_check_modes():
     """Lists password check settings."""
-    settings = {
-        # get it fixed by ver-0.8
-        1: f"{Fore.LIGHTGREEN_EX}Default {Fore.RESET}",
-        2: f"{Fore.LIGHTBLUE_EX}Advanced{Fore.RESET}",
-        3: f"{Fore.LIGHTMAGENTA_EX}Extreme {Fore.RESET}"
-    }
-    
-    print(f"\n Current setting: [{write_current_setting(1)}]")
+    try:
+        settings = {
+            # get it fixed by ver-0.8
+            1: f"{Fore.LIGHTGREEN_EX}Default {Fore.RESET}",
+            2: f"{Fore.LIGHTBLUE_EX}Advanced{Fore.RESET}",
+            3: f"{Fore.LIGHTMAGENTA_EX}Extreme {Fore.RESET}"
+        }
+        
+        print(f"\n Current setting: [{write_current_check_mode(1)}]")
 
-    build_box('t', 16)
-    for k, v in settings.items():
-        print(f"  [{k}] - [{v}]")
-    #print(f"  [9] - [{Fore.RED}BACK{' '*(8-len('BACK'))}{Fore.RESET}]") // may reuse in the future
-    print(f"  [9] - [{Fore.RED}BACK{Fore.RESET}]")
-    build_box('b', 16)
+        build_box('t', 16)
+        for k, v in settings.items():
+            print(f"  [{k}] - [{v}]")
+        #print(f"  [9] - [{Fore.RED}BACK{' '*(8-len('BACK'))}{Fore.RESET}]") // may reuse in the future
+        print(f"  [9] - [{Fore.RED}BACK{Fore.RESET}]")
+        build_box('b', 16)
+     
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'list_password_check_modes', line 152 at 'menus.py'.", True, True)
 
 
 
@@ -156,26 +178,27 @@ def list_password_diff_options():
 # =================== #
 
 # for password menu
-def write_current_setting(setting: int, wish_print: bool=False):
+def write_current_check_mode(setting: int, wish_print: bool=False):
     """Returns currently selected check mode for password checking."""
     try:
         if setting == 1:
-            if wish_print: print(f"\n Current setting: [{PrintColor("Default", Fore.LIGHTGREEN_EX)}]")
+            if wish_print: print(f"\n Current mode: [{PrintColor("Default", Fore.LIGHTGREEN_EX)}]")
             return PrintColor("Default", Fore.LIGHTGREEN_EX)
         elif setting == 2:
-            if wish_print: print(f"\n Current setting: [{PrintColor("Advanced", Fore.LIGHTBLUE_EX)}]")
+            if wish_print: print(f"\n Current mode: [{PrintColor("Advanced", Fore.LIGHTBLUE_EX)}]")
             return PrintColor("Advanced", Fore.LIGHTBLUE_EX)
         elif setting == 3:
-            if wish_print: print(f"\n Current setting: [{PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)}]")
+            if wish_print: print(f"\n Current mode: [{PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)}]")
             return PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'write_current_setting', line 152 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'write_current_setting', line 181 at 'menus.py'.", True, True)
 
 
 def password_options():
     """Handles input choice for password check mode."""
     try:
-        list_password_diff_options()
+        list_password_check_modes()
 
         while True:
             choice = choose_menu("password_checker_py")
@@ -197,15 +220,12 @@ def password_options():
                 return 9
             
             else:
-                DebugMsg("warn", f"No available option given: Using [{write_current_setting(1)}] settings!", True, True)
+                DebugMsg("warn", f"No available option given: Using [{write_current_check_mode(1)}] settings!", True, True)
                 DebugInput("System", "Type Enter to continue...", False, True)
                 return 1
     
-    except KeyboardInterrupt:
-        QuitTool()
-    
     except EOFError:
-        DebugMsg("error", "An unexpected error occurred: 'password_options', line 165 at 'menus.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'password_options', line 198 at 'menus.py'.", True, True)
 
 
 def get_password_or_command():
@@ -222,11 +242,9 @@ def get_password_or_command():
             return int(userinput), None
         except ValueError:
             return None, userinput
-    except KeyboardInterrupt:
-        QuitTool()
     
     except EOFError:
-        DebugMsg("error", "An unexpected error occured: 'get_password_or_command', line 194 at 'menus.py'.", True, True)
+        DebugMsg("error", "An unexpected error occured: 'get_password_or_command', line 231 at 'menus.py'.", True, True)
 
 
 def show_feedback():
@@ -244,7 +262,7 @@ def show_password_results(password: str, check_setting):
     """Displays password rating and advice based on user iinput."""
     try:
         render_menu_header(1)
-        write_current_setting(check_setting, True)
+        write_current_check_mode(check_setting, True)
         display_menu_title(1, override=PrintColor("Checking password", Fore.YELLOW, Style.BRIGHT))
 
         rating, desc, score = checks.rate_password(password, check_setting)
@@ -259,8 +277,9 @@ def show_password_results(password: str, check_setting):
             -1: "Your password is weak! Make it stronger, add digits and special characters."
         }
         print(f"\n {messages.get(rating, '')}")
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'show_password_results', line 209 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'show_password_results', line 261 at 'menus.py'.", True, True)
 
 
 def retry_query():
@@ -284,15 +303,14 @@ def retry_query():
             else:
                 DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
                 DebugInput("tip", "Type Enter to continue...", False, True)
-                clr_scr()
                 render_menu_header(1)
-                write_current_setting(1)
+                write_current_check_mode(1, True)
                 list_options(1, True)
-    except KeyboardInterrupt:
-        QuitTool()
+                continue
 
     except EOFError:
-        DebugMsg("error", "An unexpected error occured: 'retry_query', line 230 at 'menus.py'.", True, True)
+        DebugMsg("error", "An unexpected error occured: 'retry_query', line 285 at 'menus.py'.", True, True)
+        return 0
 
 
 # for changelog menu
@@ -307,8 +325,9 @@ def show_updates(latest_only=True, count=3):
             display_latest_update(update["date"], update["version"], True if update["version"] == LATEST_VERSION else False)
             for change_type, msg in update["changes"]:
                 DebugMsg(change_type, msg, False, True)
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'show_updates', line 272 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'show_updates', line 316 at 'menus.py'.", True, True)
 
 
 
@@ -325,8 +344,9 @@ def display_main_menu(clear: bool):
         DebugMsg("info", "Welcome to 'password_checker_py'!", True, True)
         DebugMsg("warn", "NOTE: This tool is still under development", True, True)
         list_options(0, True, exclude_key=0)
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'display_main_menu', line 292 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'display_main_menu', line 337 at 'menus.py'.", True, True)
 
 
 def display_changelog_menu(clear: bool):
@@ -344,14 +364,15 @@ def display_changelog_menu(clear: bool):
         
         # footer info
         DebugMsg("warn", "NOTE: Only the 2 most recent updates are shown here", True, True)
-        DebugMsg("warn", f"Refer to '{repo_link}' for the full changelog", True, True)
+        DebugMsg("warn", f"Refer to '{repo_link}' for the full changelog", False, True)
         
         # options
         build_box('top', length=22)
         list_options(2, False, 0)
         build_box('bot', length=22)
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'display_changelog_menu', line 305 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'display_changelog_menu', line 351 at 'menus.py'.", True, True)
     
 
 def display_help_menu(clear: bool):
@@ -368,8 +389,9 @@ def display_help_menu(clear: bool):
         DebugMsg("warn", "NOTE: This tool is still under development", True, True)
 
         list_options(3, True)
-    except:
-        DebugMsg("error", "An unexpected error occurred: 'display_help_menu', line 330 at 'menus.py'.", True, True)
+    
+    except EOFError:
+        DebugMsg("error", "An unexpected error occurred: 'display_help_menu', line 377 at 'menus.py'.", True, True)
 
 
 def display_password_checker_menu(clear: bool):
@@ -389,7 +411,7 @@ def display_password_checker_menu(clear: bool):
             
             # clear mode selection
             render_menu_header(1)
-            write_current_setting(check_setting, True)
+            write_current_check_mode(check_setting, True)
             DebugMsg("tip", "Type your password!", True, True)
             list_options(1, True, 1)
 
@@ -399,8 +421,7 @@ def display_password_checker_menu(clear: bool):
 
             # command handling
             if cmd == 0:
-                display_main_menu(True)
-                break
+                return # main menu
             elif cmd == 9:
                 clr_scr()
                 check_setting = None # reset check mode + go back
@@ -415,8 +436,7 @@ def display_password_checker_menu(clear: bool):
                 choice = retry_query()
 
                 if choice == 0:
-                    display_main_menu(True)
-                    break
+                    return
                 elif choice == 1:
                     clr_scr()
                     continue
@@ -429,11 +449,8 @@ def display_password_checker_menu(clear: bool):
             clr_scr()
             check_setting = None
 
-        except KeyboardInterrupt:
-            QuitTool()
-
         except EOFError:
-            DebugMsg("error", "An unexpected error occurred: 'display_password_checker_menu', line 348 at 'menus.py'.", True, True)
+            DebugMsg("error", "An unexpected error occurred: 'display_password_checker_menu', line 396 at 'menus.py'.", True, True)
             DebugInput("warn", "Returning to password checker.", False, True)
             continue
     
@@ -471,8 +488,9 @@ def display_changelog_submenu():
                 # stay in current menu
                 DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
                 DebugInput("tip", "Type Enter to continue...", False, True)
-        except:
-            DebugMsg("error", "An unexpected error occurred: 'display_changelog_submenu', line 415 at 'menus.py'.", True, True)
+        
+        except EOFError:
+            DebugMsg("error", "An unexpected error occurred: 'display_changelog_submenu', line 465 at 'menus.py'.", True, True)
 
 
 def display_help_submenu():
@@ -492,7 +510,8 @@ def display_help_submenu():
                 # stay in current menu
                 DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
                 DebugInput("tip", "Type Enter to continue...", False, True)
-        except:
-            DebugMsg("error", "An unexpected error occurred: 'display_help_submenu', line 446 at 'menus.py'.", True, True)
+        
+        except EOFError:
+            DebugMsg("error", "An unexpected error occurred: 'display_help_submenu', line 497 at 'menus.py'.", True, True)
 
 

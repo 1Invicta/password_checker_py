@@ -147,5 +147,5 @@ def QuitTool():
     """Quits program."""
     clr_scr()
     print(exit_msg)
-    return
+    os._exit(130)
 

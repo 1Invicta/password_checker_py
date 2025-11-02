@@ -13,15 +13,15 @@
 
 
 
-# FUTURE (ver-0.3.4):
-# [/] - implement entropy-based checks
+# FUTURE (ver-0.4.0):
+# [/] - implement OOP for (checks.py)
 
 # --- Mods --- #
 from menus import *
 from utils import DebugMsg, QuitTool, exit_msg, cmd_title
 
 # --- Main --- #
-def main():
+def main() -> None:
     """Main 'password_checker_py' program."""
     try:
         while True:
@@ -57,12 +57,24 @@ def main():
 
             else:
                 # consider as stay
-                DebugMsg("error", "Invalid option: Please input a listed menu!", False, True)
-                DebugInput("tip", "Type Enter to continue...", False, True)
-                continue
-    except KeyboardInterrupt:
+                if KeyboardInterrupt:
+                    QuitTool()
+                else:
+                    DebugInput("warn", "Invalid option: please input an available menu", True, True)
+                    continue
+
+    except Exception as e:
+        clr_scr()
+        DebugMsg("error", e, False, True)
         QuitTool()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        try:
+            QuitTool()
+        except SystemExit:
+            # retries if failed
+            os._exit(130)
