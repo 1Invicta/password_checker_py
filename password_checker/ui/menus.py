@@ -9,8 +9,8 @@
 from colorama import Fore, Style
 
 # --- Mods --- #
-import checks
-from utils import *
+import password_checker.core.checks as checks
+from password_checker.core.utils import *
 from data.changelog import changelog, repo_link
 
 # --- Info --- #

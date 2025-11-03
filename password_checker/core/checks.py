@@ -10,7 +10,7 @@ import os, math
 from colorama import Fore, Style
 
 # --- Mods --- #
-from utils import DebugMsg, DebugInput, PrintColor
+from password_checker.core.utils import DebugMsg, DebugInput, PrintColor
 
 # - Wordlists - #
 current_dir = os.getcwd()

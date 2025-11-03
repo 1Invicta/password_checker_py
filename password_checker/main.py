@@ -17,11 +17,11 @@
 # [/] - implement OOP for (checks.py)
 
 # --- Mods --- #
-from menus import *
-from utils import DebugMsg, QuitTool, exit_msg, cmd_title
+from password_checker.ui.menus import *
+from password_checker.core.utils import DebugMsg, QuitTool, exit_msg, cmd_title
 
 # --- Main --- #
-def main() -> None:
+def main():
     """Main 'password_checker_py' program."""
     try:
         while True:
