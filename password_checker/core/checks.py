@@ -1,22 +1,23 @@
-#______ [checks] _____#
+# [ checks.py ] #
 
 
-# =================== #
-# ====== Setup ====== #
-# =================== #
+# ======== Setup ======== #
 
-# --- Libs --- #
-import os, math
-from colorama import Fore, Style
+# [ Libraries ] #
+import math
+from pathlib import Path
+from colorama import Fore
 
-# --- Mods --- #
-from password_checker.core.utils import DebugMsg, DebugInput, PrintColor
+# [ Modules ] #
+from core.variables import *
+from core.utils import DebugMsg, PrintColor
 
-# - Wordlists - #
-current_dir = os.getcwd()
-data_dir = current_dir + r"\wordlists"
-file1_dir = data_dir + r"\10k-most-common.txt"
-file2_dir = data_dir + r"\100k-most-used-passwords-NCSC.txt"
+# [ Wordlists ] #
+base_dir = Path(__file__).resolve().parent.parent
+
+wordlists_dir = base_dir / "data" / "wordlists"
+file1_dir = wordlists_dir / "10k-most-common.txt"
+file2_dir = wordlists_dir / "100k-most-used-passwords-NCSC.txt"
 
 with open(file1_dir, 'r', encoding='utf-8') as f:
     COMMON_10K = set(f.read().splitlines())
@@ -25,34 +26,13 @@ with open(file2_dir, 'r', encoding='utf-8') as f:
     COMMON_100K = set(f.read().splitlines())
 
 
-# - variables - #
-lc = 'abcdefghijklmnopqrstuvwxyz'
-uc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-d = '0123456789'
-s = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
-
-MIN_LEN1 = 8
-MIN_LEN2 = 12
-MIN_LEN3 = 14
-
-MIN_ENT1 = 25
-MIN_ENT2 = 60
-MIN_ENT3 = 100
-
-cl = False
-cc = False
-cd = False
-cs = False
-cw = False
-ce = False
 
 
 
-# ==================== #
-# ====== Checks ====== #
-# ==================== #
 
-def check_len(passwd: str, type=0):
+# ======== Checks ======== #
+
+def check_len(passwd: str, type: int=0):
     """Checks the length of the password."""
     global cl
 
@@ -79,11 +59,11 @@ def check_len(passwd: str, type=0):
             DebugMsg("error", f"No specified length: [{length}]", False, True)
             return 0
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_len', line 50 at 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_len' in 'checks.py'.", True, True)
         return 0
 
 
-def check_case(passwd: str, type=0):
+def check_case(passwd: str, type: int=0):
     """Checks for upper and lowercases in the password."""
     global cc
 
@@ -91,23 +71,34 @@ def check_case(passwd: str, type=0):
     try:
         uc = any(c.isupper() for c in passwd)
         lc = any(c.islower() for c in passwd)
-        if uc and lc:
-            DebugMsg("load-ok", f"Upper and lower case found", False, True)
-            cc = False
-            return 1
-        elif uc or lc:
-            DebugMsg("load-ok", f"{"Uppsercase" if uc else "Lowercase"} found", False, True)
+        
+        if type == 1:
+            if uc or lc:
+                DebugMsg("load-ok", f"{"Uppsercase" if uc else "Lowercase"} found", False, True)
+                cc = False
+                return 1
+            DebugMsg("error", f"Upper and/or lower case not found", False, True)
             cc = True
-            return .5
-        else:
+            return 0
+        
+        elif 2 <= type:
+            if uc and lc:
+                DebugMsg("load-ok", f"Upper and lower case found", False, True)
+                cc = False
+                return 1
             DebugMsg("error", f"Upper and/or lower case not found", False, True)
             return 0
+        
+        else:
+            cc = True
+            return 0
+        
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_case', line 56 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_case' in 'checks.py'.", True, True)
         return 0
 
 
-def check_digit(passwd: str, type=0):
+def check_digit(passwd: str, type: int=0):
     """Checks for digits in the password."""
     global cd
 
@@ -117,16 +108,28 @@ def check_digit(passwd: str, type=0):
         for c in passwd:
             if c.isdigit():
                 td += 1
-        DebugMsg(f"{"load-ok" if td>0 else "error"}", f"Digits: {td}", False, True)
-        if any(c.isdigit() for c in passwd): cd=False; return 1
-        else: cd=True; return 0
+        
+        if type == 1:
+            DebugMsg(f"{"load-ok" if td>=MIN_NUM1 else "error"}", f"Digits: {td}", False, True)
+            if td >= MIN_NUM1: cd=False; return 1
+            else: cd=True; return 0
+        
+        elif type == 2:
+            DebugMsg(f"{"load-ok" if td>=MIN_NUM2 else "error"}", f"Digits: {td}", False, True)
+            if td >= MIN_NUM2: cd=False; return 1
+            else: cd=True; return 0
+        
+        elif type == 3:
+            DebugMsg(f"{"load-ok" if td>=MIN_NUM3 else "error"}", f"Digits: {td}", False, True)
+            if td >= MIN_NUM3: cd=False; return 1
+            else: cd=True; return 0
 
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_digit', line 77 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_digit' in 'checks.py'.", True, True)
         return 0
 
 
-def check_special(passwd: str, type=0):
+def check_special(passwd: str, type: int=0):
     """Checks for special characters in the password."""
     global cs
 
@@ -136,13 +139,42 @@ def check_special(passwd: str, type=0):
         for c in passwd:
             if not c.isalnum():
                 ts += 1
-        DebugMsg(f"{"load-ok" if ts>0 else "error"}", f"Special characters: {ts}", False, True)
-        if any(not c.isalnum() for c in passwd): cs=False; return 1
+
+        if type == 1:
+            DebugMsg(f"{"load-ok" if ts>=MIN_SPL1 else "error"}", f"Special characters: {ts}", False, True)
+            if ts>=MIN_SPL1: cs=False; return 1
+            else: cs=True; return 0
+        
+        elif type == 2:
+            DebugMsg(f"{"load-ok" if ts>=MIN_SPL2 else "error"}", f"Special characters: {ts}", False, True)
+            if ts>=MIN_SPL2: cs=False; return 1
+            else: cs=True; return 0
+        
+        elif type == 3:
+            DebugMsg(f"{"load-ok" if ts>=MIN_SPL3 else "error"}", f"Special characters: {ts}", False, True)
+            if ts>=MIN_SPL3: cs=False; return 1
+            else: cs=True; return 0
+        
         else: cs=True; return 0
         
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_special', line 93 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_special' in 'checks.py'.", True, True)
         return 0
+
+
+def check_pattern(passwd: str, type: int=0):
+    """Checks for patterns in the password."""
+    global cp
+    
+    try:
+        DebugMsg("fix", "Checking for patterns...", True, True)
+        DebugMsg(f"{"load-ok" if passwd not in (passwd+passwd)[1:-1] else "error"}", f"{"Pattern not found." if passwd not in (passwd + passwd)[1:-1] else "Pattern found!"}", False, True)
+        if passwd not in (passwd+passwd)[1:-1]: cp = False
+        else: cp = True
+        return 0 if passwd in (passwd + passwd)[1:-1] else 1
+    
+    except:
+        DebugMsg("error", "An unexpected error occurred: 'check_pattern' in 'checks.py.", True, True)
 
 
 def check_seclist(passwd: str, type: int=0):
@@ -174,8 +206,9 @@ def check_seclist(passwd: str, type: int=0):
         
         else:
             return 0
+        
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_seclist', line 109 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_seclist' in 'checks.py'.", True, True)
         return 0
 
 
@@ -201,22 +234,22 @@ def check_entropy(passwd: str, type: int=0):
                 # handle other characters
                 char_pool.update(c)
 
-        # count potential character set (R)
-        R = 0
-        if any(c in lc for c in passwd): R += len(lc)
-        if any(c in uc for c in passwd): R += len(uc)
-        if any(c in d for c in passwd): R += len(d)
-        if any(c in s for c in passwd): R += len(s)
+        # count potential character set (R/r)
+        r = 0
+        if any(c in lc for c in passwd): r += len(lc)
+        if any(c in uc for c in passwd): r += len(uc)
+        if any(c in d for c in passwd): r += len(d)
+        if any(c in s for c in passwd): r += len(s)
         
         # fallback to unique characters
-        if R == 0:
-            R = len(set(passwd))
+        if r == 0:
+            r = len(set(passwd))
         
         L = len(passwd)
 
-        if R == 0: return 0
+        if r == 0: return 0
         
-        entropy = L * math.log2(R)
+        entropy = L * math.log2(r)
 
         rounded_entropy = round(entropy, 2)
 
@@ -233,25 +266,26 @@ def check_entropy(passwd: str, type: int=0):
         elif type == 3:
             DebugMsg(f"{"load-ok" if 100<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT3} bits", False, True)
             if 100 <= rounded_entropy: ce=False; return 1
-            else: ce=True; return 1
+            else: ce=True; return 0
             
         else:
             DebugMsg("error", f"Entropy: [{rounded_entropy}]", False, True)
             return 0
     except:
-        DebugMsg("error", "An unexpected error occurred: 'check_entropy', line 136 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'check_entropy' in 'checks.py'.", True, True)
         return 0
 
 
 
-# ==================== #
-# ====== Result ====== #
-# ==================== #
 
-def rate_password(passwd: str, check_list_arg=0):
+
+
+# ======== Result ======== #
+
+def rate_password(passwd: str, check_list_arg: int=0):
     """Rates the password based on various checks."""
     try:
-        checks = [check_len, check_case, check_digit, check_special, check_seclist, check_entropy]
+        checks = [check_len, check_case, check_digit, check_special, check_pattern, check_seclist, check_entropy]
         results = [func(passwd, check_list_arg) for func in checks]
         
         DebugMsg("fix", "Rating password...", True, True)
@@ -260,7 +294,7 @@ def rate_password(passwd: str, check_list_arg=0):
         score = round(total / len(checks), 2)
         DebugMsg("load-ok", "Calculated rating", False, True)
 
-        if score >= 0.8:
+        if 0.8 <= score:
             return 1, f"[{PrintColor("Strong", Fore.GREEN)}]", score
         elif 0.5 <= score < 0.8:
             return 0, f"[{PrintColor("Moderate", Fore.YELLOW)}]", score
@@ -268,6 +302,6 @@ def rate_password(passwd: str, check_list_arg=0):
             return -1, f"[{PrintColor("Weak", Fore.RED)}]", score
     
     except:
-        DebugMsg("error", "An unexpected error occurred: 'rate_password', line 209 in 'checks.py'.", True, True)
+        DebugMsg("error", "An unexpected error occurred: 'rate_password' in 'checks.py'.", True, True)
         return 0, f"[{PrintColor("Error", Fore.LIGHTRED_EX)}]", score
 

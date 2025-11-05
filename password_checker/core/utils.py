@@ -1,24 +1,20 @@
-#______ [utils] _____ #
+# [ utils.py ] #
 
 
-# =================== #
-# ====== Setup ====== #
-# =================== #
+# ======== Setup ======== #
 
-# ---- Libs ---- #
+# [ Libraries ] #
 import os, re
 from colorama import Fore, Style
 
-# --- Visual --- #
-header_box = " #--------------------------#"
+# [ Modules ] #
+from ui.visuals import header_box
 
 
 
-# =================== #
-# ====== Utils ====== #
-# =================== #
+# ======== Utils ======== #
 
-def PrintColor(text: str, color=Fore.WHITE, style=Style.NORMAL):
+def PrintColor(text: str, color=Fore.WHITE, style=Style.NORMAL): # type: ignore
     """Custom print with Fore and Style using 'colorama'.\n* text: Text to color\n* color: Foreground color\n* style: Text style (BRIGHT, NORMAL or DIM)"""
     return f"{color}{style}{text}{Style.RESET_ALL}"
 
@@ -92,35 +88,35 @@ def clr_scr():
     try:
         os.system('cls' if os.name == 'nt' else 'clear')
     except:
-        DebugMsg("error", "An error occurred: 'clr_scr', line 90 at 'utils.py'.", True, True)
+        DebugMsg("error", "An error occurred: 'clr_scr' in 'utils.py'.", True, True)
 
 
 def cmd_title(title: str):
     try:
         os.system(f"title {title}")
     except:
-        DebugMsg("error", "An error occurred: 'cmd_title', line 98 at 'utils.py'.", True, True)
+        DebugMsg("error", "An error occurred: 'cmd_title' in 'utils.py'.", True, True)
 
 
 def display_latest_update(lastUpdate: str, version: str, isLatestUpdate: bool):
     try:
         print(f"\n * {lastUpdate} - [{Fore.LIGHTGREEN_EX if isLatestUpdate else Fore.GREEN}ver-{version}{Style.RESET_ALL}]")
     except:
-        DebugMsg("error", "An error occurred: 'display_latest_update', line 105 at 'utils.py'.", True, True)
+        DebugMsg("error", "An error occurred: 'display_latest_update' in 'utils.py'.", True, True)
 
 
 def display_current_version(current_ver: str):
     try:
         print(f"\n <Current>: [{PrintColor(f"version-{current_ver}", Fore.GREEN, Style.BRIGHT)}]")
     except:
-        DebugMsg("error", "An error occurred: 'display_current_version', line 112 at 'utils.py'.", True, True)
+        DebugMsg("error", "An error occurred: 'display_current_version' in 'utils.py'.", True, True)
 
 
 def strip_ansi(text: str) -> str:
     return re.sub(r'\x1b\[[0-9;]*[A-Za-z]', '', text)
 
 
-def fit_in_header_box(text: str, box_width: int = len(header_box), suffix='...', fill_char=' ') -> str:
+def fit_in_header_box(text: str, box_width: int = len(header_box), suffix: str='...', fill_char: str=' ') -> str:
     """Fits text within the header box while accounting for ANSI codes."""
     visible = strip_ansi(text)
     border_len = len(" | ") + len("|")
@@ -133,7 +129,7 @@ def fit_in_header_box(text: str, box_width: int = len(header_box), suffix='...',
     return f"{visible}{Style.RESET_ALL}{padding}"
 
 
-def inner_color_brackets(text: str, color=Fore.WHITE, style=Style.NORMAL) -> str:
+def inner_color_brackets(text: str, color=Fore.WHITE, style=Style.NORMAL) -> str: # type: ignore
     """Colors text within brackets, keeps the default bracket style."""
     if not (text.startswith('[') and text.endswith(']')):
         return PrintColor(text, color, style)

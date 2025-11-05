@@ -1,9 +1,8 @@
-#_____ [updates] ____ #
+# [ updates.py ] #
 
 
-# =================== #
-# ====== Setup ====== #
-# =================== #
+
+# ======== Setup ======== #
 
 repo_link = "https://github.com/1Invicta/password_checker_py"
 
@@ -127,6 +126,19 @@ changelog = [
             ("fix", "Rating system adjustments and optimized performance checks"),
             ("fix", "Improved stability with enhanced error handling"),
             ("fix", "Profiled password checks and greatly improved performance")
+        ]
+    },
+    {
+        # Pattern checking added
+        "date": "05/11/2025",
+        "version": "0.3.5",
+        "changes":
+        [
+            ("added", "Implemented pattern checking in password checks"),
+            ("fix", "Improved type hinting and comments for readability"),
+            ("fix", "Extracted global constants and variables as modules"),
+            ("fix", "Reorganized scripts and directories for a better project structure"),
+            ("removed", "Demolished password rating inconsistencies! (finally...)")
         ]
     }
 ]

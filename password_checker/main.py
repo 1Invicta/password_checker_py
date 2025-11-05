@@ -1,13 +1,15 @@
-#____ [main] ____#
+# [ main.py ] #
 
 
 # ========================= NOTES ========================== #
 
-# (main.py) main loop => wrapper for everything
-# (menus.py) menus handler => each menu has its own submenu
-# (changelog.py) stores all past updates
-# (checks.py) password check system
-# (utils.py) helper and debugging functions
+# (variables.py): holds global variables and constants
+# (visuals.py): holds CLI user interface constants
+# (utils.py): helper and debugging functions
+# (checks.py): password check and score system
+# (menus.py): menus handler (each menu has its own submenu)
+# (changelog.py): stores all past updates
+# (main.py): main loop (wrapper for everything)
 
 # ========================================================== #
 
@@ -16,11 +18,11 @@
 # FUTURE (ver-0.4.0):
 # [/] - implement OOP for (checks.py)
 
-# --- Mods --- #
-from password_checker.ui.menus import *
-from password_checker.core.utils import DebugMsg, QuitTool, exit_msg, cmd_title
+# [ Modules ] #
+from ui.menus import *
+from core.utils import DebugMsg, QuitTool, exit_msg, cmd_title
 
-# --- Main --- #
+# [ Main ] #
 def main():
     """Main 'password_checker_py' program."""
     try:
@@ -28,7 +30,7 @@ def main():
             cmd_title("password_checker_py - Home")
             # main loop
             display_main_menu(True)
-            wish_menu = choose_menu()
+            wish_menu = choose_menu(easter_egg=True, submenu="Home")
 
             if wish_menu == 0:
                 # stay
@@ -65,7 +67,7 @@ def main():
 
     except Exception as e:
         clr_scr()
-        DebugMsg("error", e, False, True)
+        DebugMsg("error", str(e), False, True)
         QuitTool()
 
 
