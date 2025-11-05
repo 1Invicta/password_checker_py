@@ -1,9 +1,0 @@
-    ===== NOTE =====
-
-There are several issues with the tool:
-    - Password rating inconsistencies (yes, still not fixed)
-    - Poorly written code (mostly redundant and repetitive code)
-
-    As of this current build (0.3.4-apha), this patch fixed and improved
-the tool in some areas but broke it in others. I will work on them when
-possible.
