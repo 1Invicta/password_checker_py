@@ -92,8 +92,13 @@ def clr_scr():
 
 
 def cmd_title(title: str):
+    """Sets the terminal"""
     try:
-        os.system(f"title {title}")
+        if os.name == 'nt':
+            os.system(f"title {title}")
+
+        elif os.name == 'posix':
+            os.system(f"\033]0;{title}\007")
     except:
         DebugMsg("error", "An error occurred: 'cmd_title' in 'utils.py'.", True, True)
 

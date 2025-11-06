@@ -254,23 +254,24 @@ def check_entropy(passwd: str, type: int=0):
         rounded_entropy = round(entropy, 2)
 
         if type == 1:
-            DebugMsg(f"{"load-ok" if 25<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / [{MIN_ENT1}] bits", False, True)
-            if 25 <= rounded_entropy: ce=False; return 1
+            DebugMsg(f"{"load-ok" if MIN_ENT1<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / [{MIN_ENT1}] bits", False, True)
+            if MIN_ENT2 <= rounded_entropy: ce=False; return 1
             else: ce=True; return 0
             
         elif type == 2:
-            DebugMsg(f"{"load-ok" if 60<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT2} bits", False, True)
-            if 60 <= rounded_entropy: ce=False; return 1
+            DebugMsg(f"{"load-ok" if MIN_ENT2<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT2} bits", False, True)
+            if MIN_ENT2 <= rounded_entropy: ce=False; return 1
             else: ce=True; return 0
             
         elif type == 3:
-            DebugMsg(f"{"load-ok" if 100<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT3} bits", False, True)
-            if 100 <= rounded_entropy: ce=False; return 1
+            DebugMsg(f"{"load-ok" if MIN_ENT3<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT3} bits", False, True)
+            if MIN_ENT3 <= rounded_entropy: ce=False; return 1
             else: ce=True; return 0
             
         else:
             DebugMsg("error", f"Entropy: [{rounded_entropy}]", False, True)
             return 0
+        
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_entropy' in 'checks.py'.", True, True)
         return 0
@@ -282,11 +283,11 @@ def check_entropy(passwd: str, type: int=0):
 
 # ======== Result ======== #
 
-def rate_password(passwd: str, check_list_arg: int=0):
+def rate_password(passwd: str, check_mode: int=0):
     """Rates the password based on various checks."""
     try:
         checks = [check_len, check_case, check_digit, check_special, check_pattern, check_seclist, check_entropy]
-        results = [func(passwd, check_list_arg) for func in checks]
+        results = [func(passwd, check_mode) for func in checks]
         
         DebugMsg("fix", "Rating password...", True, True)
         total = sum(results)

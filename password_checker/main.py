@@ -18,9 +18,12 @@
 # FUTURE (ver-0.4.0):
 # [/] - implement OOP for (checks.py)
 
+# [ Libraries ] #
+import os
+
 # [ Modules ] #
-from ui.menus import *
-from core.utils import DebugMsg, QuitTool, exit_msg, cmd_title
+from ui.menus import display_main_menu, choose_menu, display_password_checker_menu, display_changelog_submenu, display_help_submenu
+from core.utils import DebugMsg, DebugInput, QuitTool, cmd_title, clr_scr, exit_msg
 
 # [ Main ] #
 def main():
@@ -59,15 +62,12 @@ def main():
 
             else:
                 # consider as stay
-                if KeyboardInterrupt:
-                    QuitTool()
-                else:
-                    DebugInput("warn", "Invalid option: please input an available menu", True, True)
-                    continue
+                DebugInput("warn", "Invalid option: please input an available menu", True, True)
+                continue
 
-    except Exception as e:
+    except Exception:
         clr_scr()
-        DebugMsg("error", str(e), False, True)
+        DebugMsg("error", "An unexpected error occured: 'main' in 'main.py'.", False, True)
         QuitTool()
 
 

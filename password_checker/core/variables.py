@@ -1,5 +1,6 @@
 # [ variables.py ] #
 
+
 # ======== Setup ======== #
 
 lc = 'abcdefghijklmnopqrstuvwxyz'

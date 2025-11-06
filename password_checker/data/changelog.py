@@ -1,7 +1,6 @@
 # [ updates.py ] #
 
 
-
 # ======== Setup ======== #
 
 repo_link = "https://github.com/1Invicta/password_checker_py"
@@ -139,6 +138,16 @@ changelog = [
             ("fix", "Extracted global constants and variables as modules"),
             ("fix", "Reorganized scripts and directories for a better project structure"),
             ("removed", "Demolished password rating inconsistencies! (finally...)")
+        ]
+    },
+    {
+        # performance patch
+        "date": "06/11/2025",
+        "version": "0.3.6",
+        "changes":
+        [
+            ("fix", "Replaced wildcard imports with explicit imports"),
+            ("fix", "Fixed nested f-strings")
         ]
     }
 ]
