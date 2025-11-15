@@ -149,5 +149,18 @@ changelog = [
             ("fix", "Replaced wildcard imports with explicit imports"),
             ("fix", "Fixed nested f-strings")
         ]
+    },
+    {
+        # generator menu
+        "date": "15/11/2025",
+        "version": "0.3.7",
+        "changes":
+        [
+            ("added", "Added password generator menu"),
+            ("added", "Added output result functionality in JSON format"),
+            ("fix", "Packaged project for distribution"),
+            ("fix", "Corrected module imports and resolved inconsistencies \n\twith argument handling and nested f-string return values"),
+            ("fix", "Adjusted password check mode requirements")
+        ]
     }
 ]

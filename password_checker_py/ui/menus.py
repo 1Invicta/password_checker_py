@@ -8,10 +8,11 @@ from colorama import Fore, Style
 
 
 # [ Modules ] #
-import core.checks as checks
-from ui.visuals import header_box
-from data.changelog import changelog, repo_link
-from core.utils import DebugMsg, DebugInput, PrintColor, clr_scr, display_current_version, display_latest_update
+from .visuals import header_box
+from ..core import checks as checks
+from ..data.changelog import changelog, repo_link
+from ..core.generator import generate_password
+from ..core.utils import DebugMsg, DebugInput, PrintColor, clr_scr, display_current_version, display_latest_update
 
 
 # [ Information ] #
@@ -21,9 +22,10 @@ LATEST_UPDATE_DATE = changelog[-1]["date"]
 
 # [ options ] #
 menu_options = {
-    1: "Password!",
-    2: "Changelog",
-    3: "Help",
+    1: "Check Password",
+    2: "Generate Password",
+    3: "Changelog",
+    4: "Help",
     9: "Quit"
 }
 
@@ -83,8 +85,9 @@ def display_menu_title(menu_id: int, override: str=''):
         titles = {
             0: "/Home",
             1: "/password_checker_py",
-            2: "/Changelog",
-            3: "/Help"
+            2: "/password_generator",
+            3: "/Changelog",
+            4: "/Help"
         }
         title = titles.get(menu_id, "/")
         print(f"\n<===[{title}]===>" if override=='' else f"\n<===[{str(override)}]===>")
@@ -93,9 +96,9 @@ def display_menu_title(menu_id: int, override: str=''):
         DebugMsg("error", "An unexpected error occurred: 'display_menu_title' in 'menus.py'.", True, True)
 
 
-def render_menu_header(menu_id: int):
+def render_menu_header(menu_id: int, clear: bool=True):
     try:
-        display_global_header(True)
+        display_global_header(clear)
         display_menu_title(menu_id)
 
     except Exception:
@@ -122,10 +125,10 @@ def choose_menu(easter_egg: bool=False, submenu: str=""):
         return 0
 
 
-def list_options(menu_id: int, buildBox: bool, exclude_key: int=-1):
+def list_options(menu_id: int, buildBox: bool, exclude_key: int=-1, boxSize: int = 15):
     """Displays available menus for the selected menu."""
     try:
-        if buildBox: build_box('top')
+        if buildBox: build_box('top', length=boxSize)
 
         options = (
             menu_options if menu_id == 0 else
@@ -141,28 +144,40 @@ def list_options(menu_id: int, buildBox: bool, exclude_key: int=-1):
             color = Fore.RED if k == 9 else Fore.WHITE
             print(f"  [{k}] - {PrintColor(v, color)}")
         
-        if buildBox: build_box('bot')
+        if buildBox: build_box('bot', length=boxSize)
     
     except Exception:
         DebugMsg("error", "An unexpected error occurred: 'list_options' in 'menus.py'.", True, True)
 
 
-def list_password_check_modes():
-    """Lists password check settings."""
+def list_password_check_modes(isGenerator: bool, write_current_mode: bool = True):
+    """Lists password check modes."""
     try:
-        settings = {
-            # get it fixed
-            1: f"{Fore.LIGHTGREEN_EX}Default {Fore.RESET}",
-            2: f"{Fore.LIGHTBLUE_EX}Advanced{Fore.RESET}",
-            3: f"{Fore.LIGHTMAGENTA_EX}Extreme {Fore.RESET}"
-        }
+        if not isinstance(isGenerator, bool): # type: ignore
+            DebugMsg("error", "'isGenerator' argument must be a boolean: 'list_password_check_modes' in 'menus.py'.", False, True)
         
-        print(f"\n Current setting: [{write_current_check_mode(1)}]")
+        settings = (
+            {
+            # get it fixed
+                1: f"{Fore.LIGHTGREEN_EX}Basic {Fore.RESET}",
+                2: f"{Fore.LIGHTBLUE_EX}Medium{Fore.RESET}",
+                3: f"{Fore.LIGHTMAGENTA_EX}Strong{Fore.RESET}"
+            }
+            if isGenerator == False
+            else {
+                1: f"{Fore.LIGHTGREEN_EX}Simple  {Fore.RESET}",
+                2: f"{Fore.LIGHTBLUE_EX}Balanced{Fore.RESET}",
+                3: f"{Fore.LIGHTMAGENTA_EX}Secure  {Fore.RESET}"
+            }
+        )
+        
+        if write_current_mode: print(f"\n Current mode: [{write_current_check_mode(1, False, isGenerator)}]")
+
 
         build_box('t', 16)
         for k, v in settings.items():
             print(f"  [{k}] - [{v}]")
-        #print(f"  [9] - [{Fore.RED}BACK{' '*(8-len('BACK'))}{Fore.RESET}]") // may reuse in the future
+        #print(f"  [9] - [{Fore.RED}BACK{' '*(8-len('BACK'))}{Fore.RESET}]")# // may reuse in the future
         print(f"  [9] - [{Fore.RED}BACK{Fore.RESET}]")
         build_box('b', 16)
      
@@ -178,30 +193,44 @@ def list_password_check_modes():
 # ======== Extractions ======== #
 
 # for password menu
-def write_current_check_mode(setting: int, wish_print: bool=False):
+def write_current_check_mode(setting: int, wish_print: bool=False, isGenerator: bool=False):
     """Returns currently selected check mode for password checking."""
     try:
         if setting == 1:
-            if wish_print: print(f"\n Current mode: [{PrintColor("Default", Fore.LIGHTGREEN_EX)}]")
-            return f"\n Current mode: {PrintColor("Default", Fore.LIGHTGREEN_EX)}"
+            if isGenerator == False:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Basic", Fore.LIGHTGREEN_EX)}]")
+                return f"{PrintColor("Basic", Fore.LIGHTGREEN_EX)}"
+            else:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Simple", Fore.LIGHTGREEN_EX)}]")
+                return f"{PrintColor("Simple", Fore.LIGHTGREEN_EX)}"
+        
         elif setting == 2:
-            if wish_print: print(f"\n Current mode: [{PrintColor("Advanced", Fore.LIGHTBLUE_EX)}]")
-            return f"\n Current mode: {PrintColor("Advanced", Fore.LIGHTBLUE_EX)}"
+            if isGenerator == False:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Medium", Fore.LIGHTBLUE_EX)}]")
+                return f"{PrintColor("Medium", Fore.LIGHTBLUE_EX)}"
+            else:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Balanced", Fore.LIGHTBLUE_EX)}]")
+                return f"{PrintColor("Balanced", Fore.LIGHTBLUE_EX)}"
+            
         elif setting == 3:
-            if wish_print: print(f"\n Current mode: [{PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)}]")
-            return f"\n Current mode: {PrintColor("Extreme", Fore.LIGHTMAGENTA_EX)}"
+            if isGenerator == False:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Strong", Fore.LIGHTMAGENTA_EX)}]")
+                return f"{PrintColor("Strong", Fore.LIGHTMAGENTA_EX)}"
+            else:
+                if wish_print: print(f"\n Current mode: [{PrintColor("Secure", Fore.LIGHTMAGENTA_EX)}]")
+                return f"{PrintColor("Secure", Fore.LIGHTMAGENTA_EX)}"
     
     except Exception:
         DebugMsg("error", "An unexpected error occurred: 'write_current_setting' in 'menus.py'.", True, True)
 
 
-def password_options():
+def password_options(useGenerator: bool=False, submenu: str = ""):
     """Handles input choice for password check mode."""
     try:
-        list_password_check_modes()
+        list_password_check_modes(isGenerator=useGenerator)
 
         while True:
-            choice = choose_menu(easter_egg=False, submenu="password_checker_py")
+            choice = choose_menu(easter_egg=False, submenu="password_checker_py" if not submenu else submenu)
             
             if choice == 1:
                 clr_scr()
@@ -220,7 +249,7 @@ def password_options():
                 return 9
             
             else:
-                DebugMsg("warn", f"No available option given: Using [{write_current_check_mode(1)}] settings!", True, True)
+                DebugMsg("warn", f"No available option given: Using [{write_current_check_mode(1, isGenerator=useGenerator)}] settings!", True, True)
                 DebugInput("System", "Type Enter to continue...", False, True)
                 return 1
     
@@ -228,19 +257,28 @@ def password_options():
         DebugMsg("error", "An unexpected error occurred: 'password_options' in 'menus.py'.", True, True)
 
 
-def get_password_or_command():
+def get_password_or_command(isGenerator: bool = False):
     """Returns a tuple (command, password) from user input."""
     try:
+        if not isGenerator:
+            userinput = input("\n<CMD/password_checker_py>: ").strip()
+            if not userinput:
+                DebugMsg("warn", "Empty input. Please enter a password.", False, True)
+                DebugInput("tip", "Press Enter to retry...", False, True)
+                return None, None
+            
+            # userinput is either command or password
+            try:
+                return int(userinput), None
+            
+            except ValueError:
+                return None, userinput
+        
         userinput = input("\n<CMD/password_checker_py>: ").strip()
         if not userinput:
-            DebugMsg("warn", "Empty input. Please enter a password.", False, True)
-            DebugInput("tip", "Press Enter to retry...", False, True)
-            return None, None
-        
-        # userinput is either command or password
+            return None, True
         try:
             return int(userinput), None
-        
         except ValueError:
             return None, userinput
     
@@ -284,11 +322,11 @@ def show_password_results(password: str, check_setting: int):
         DebugMsg("error", "An unexpected error occurred: 'show_password_results' in 'menus.py'.", True, True)
 
 
-def retry_query():
+def retry_query(isGenerator: bool = False):
     """Queries user to retry for a password check."""
     try:
         while True:
-            user_input = input("\n<CMD/password_checker_py>: ")
+            user_input = input("\n<CMD/password_checker_py>: " if not isGenerator else "\n<CMD/checker/generator>")
 
             if user_input == "0":
                 return 0
@@ -306,7 +344,7 @@ def retry_query():
                 DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
                 DebugInput("tip", "Type Enter to continue...", False, True)
                 render_menu_header(1)
-                write_current_check_mode(1, True)
+                write_current_check_mode(1, True, isGenerator)
                 list_options(1, True)
                 continue
 
@@ -346,56 +384,10 @@ def display_main_menu(clear: bool):
 
         DebugMsg("info", "Welcome to 'password_checker_py'!", True, True)
         DebugMsg("warn", "NOTE: This tool is still under development", True, True)
-        list_options(0, True, exclude_key=0)
+        list_options(0, True, exclude_key=0, boxSize=23)
     
     except Exception:
         DebugMsg("error", "An unexpected error occurred: 'display_main_menu' in 'menus.py'.", True, True)
-
-
-def display_changelog_menu(clear: bool):
-    """Displays changelog menu content."""
-    try:
-        display_global_header(clear)
-        display_menu_title(2)
-        
-        # show version and last update date
-        display_current_version(LATEST_VERSION)
-        DebugMsg("info", f"Latest update on {LATEST_UPDATE_DATE}", False, True)
-
-        # show recent updates
-        show_updates(latest_only=True, count=2)
-        
-        # footer info
-        print(f"\n  <===[{PrintColor("NOTE", Fore.YELLOW)}]===>")
-        DebugMsg("warn", "Only the 2 most recent updates are shown here", False, True)
-        DebugMsg("warn", f"Refer to '{repo_link}' for the full changelog", False, True)
-        
-        # options
-        build_box('top', length=22)
-        list_options(2, False, 0)
-        build_box('bot', length=22)
-    
-    except Exception:
-        DebugMsg("error", "An unexpected error occurred: 'display_changelog_menu' in 'menus.py'.", True, True)
-    
-
-def display_help_menu(clear: bool):
-    """Displays info menu content."""
-    try:
-        display_global_header(clear)
-        display_menu_title(3)
-        
-        # menu content
-        DebugMsg("info", "Welcome to 'password_checker'!", True, True)
-        DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
-        DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
-
-        DebugMsg("warn", "NOTE: This tool is still under development", True, True)
-
-        list_options(3, True)
-    
-    except Exception:
-        DebugMsg("error", "An unexpected error occurred: 'display_help_menu' in 'menus.py'.", True, True)
 
 
 def display_password_checker_menu(clear: bool):
@@ -455,8 +447,135 @@ def display_password_checker_menu(clear: bool):
 
         except Exception:
             DebugMsg("error", "An unexpected error occurred: 'display_password_checker_menu' in 'menus.py'.", True, True)
-            DebugInput("warn", "Returning to password checker.", False, True)
+            DebugInput("warn", "Press Enter to return to password checker.", False, True)
             continue
+
+
+def display_password_generator_menu(clear: bool):
+    """Displays password generator menu content."""
+    check_setting = None
+
+    while True:
+        try:
+            render_menu_header(2)
+            
+            # choose check mode if not selected
+            if check_setting is None:
+                check_setting = password_options(useGenerator=True, submenu="Checker/Generator")
+                if check_setting == 9:
+                    clr_scr()
+                    return
+            
+            # clear mode selection
+            render_menu_header(2)
+            write_current_check_mode(check_setting, True, True)
+            DebugMsg("tip", "Press Enter to generate password!\n(Choosing a menu won't generate a password)", True, True)
+            
+            #list_password_check_modes(True, False)
+            list_options(1, True, 1)
+            cmd, generate = get_password_or_command(isGenerator=True) # type: ignore
+            if cmd is None and generate is None:
+                continue
+
+            # command handling
+            if cmd == 0:
+                return
+            elif cmd == 9:
+                clr_scr()
+                check_setting = None
+                continue
+            elif cmd not in [0, 9]:
+                DebugInput("warn", "Unavailable menu!", True, True)
+                clr_scr()
+                continue
+            
+            # generate handling
+            if generate:
+                pass
+            
+            #pre_chk = choose_menu(submenu="Checker/Generator")
+            #if pre_chk in [1, 2, 3]:
+            #    check_setting = pre_chk
+            #    continue
+            #elif pre_chk == 0:
+            #    pass
+            #elif pre_chk == 9:
+            #    clr_scr()
+            #    check_setting = None
+            #    continue
+            #elif pre_chk not in [1, 2, 3, 9]:
+            #    clr_scr()
+            #    return
+
+            print(f"\n  <===[{PrintColor("GENERATOR", Fore.YELLOW)}]===>")
+            generated_res = generate_password(check_setting)
+            print(f"\n * Password: {generated_res}")
+            list_options(1, True)
+            choice = retry_query(True)
+
+            if choice == 0:
+                return
+            elif choice == 1:
+                clr_scr()
+                continue
+            elif choice == 9:
+                clr_scr()
+                check_setting = None
+                continue
+
+            clr_scr()
+            check_setting = None
+
+        except Exception:
+            DebugMsg("error", "An unexpected error occurred: 'display_password_generator_menu' in 'menus.py'.", True, True)
+            DebugInput("warn", "Press Enter to return to password generator.", False, True)
+            continue
+
+
+def display_changelog_menu(clear: bool):
+    """Displays changelog menu content."""
+    try:
+        display_global_header(clear)
+        display_menu_title(3)
+        
+        # show version and last update date
+        display_current_version(LATEST_VERSION)
+        DebugMsg("info", f"Latest update on {LATEST_UPDATE_DATE}", False, True)
+
+        # show recent updates
+        show_updates(latest_only=True, count=2)
+        
+        # footer info
+        print(f"\n  <===[{PrintColor("NOTE", Fore.YELLOW)}]===>")
+        DebugMsg("warn", "Only the 2 most recent updates are shown here", False, True)
+        DebugMsg("warn", f"Refer to '{repo_link}' for the full changelog", False, True)
+        
+        # options
+        build_box('top', length=22)
+        list_options(2, False, 0)
+        build_box('bot', length=22)
+    
+    except Exception:
+        DebugMsg("error", "An unexpected error occurred: 'display_changelog_menu' in 'menus.py'.", True, True)
+    
+
+def display_help_menu(clear: bool):
+    """Displays info menu content."""
+    try:
+        display_global_header(clear)
+        display_menu_title(4)
+        
+        # menu content
+        DebugMsg("info", "Welcome to 'password_checker'!", True, True)
+        DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
+        DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
+
+        DebugMsg("warn", "NOTE: This tool is still under development", True, True)
+
+        list_options(3, True)
+    
+    except Exception:
+        DebugMsg("error", "An unexpected error occurred: 'display_help_menu' in 'menus.py'.", True, True)
 
 
 
@@ -478,7 +597,7 @@ def display_changelog_submenu():
                 # display full changelog
                 display_global_header(True)
 
-                display_menu_title(2, "Full Changelog")
+                display_menu_title(3, "Full Changelog")
                 show_updates(latest_only=False)
 
                 DebugMsg("warn", "End of changelog.", True, True)

@@ -4,11 +4,14 @@
 # ======== Setup ======== #
 
 # [ Libraries ] #
-import os, re
+import sys, os, re
 from colorama import Fore, Style
 
 # [ Modules ] #
-from ui.visuals import header_box
+from ..ui.visuals import header_box
+
+
+
 
 
 
@@ -148,5 +151,5 @@ def QuitTool():
     """Quits program."""
     clr_scr()
     print(exit_msg)
-    os._exit(130)
+    sys.exit(0)
 

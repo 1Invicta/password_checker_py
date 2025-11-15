@@ -10,9 +10,9 @@ s = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
 
 MIN_LEN1 = 8
 MIN_LEN2 = 12
-MIN_LEN3 = 14
+MIN_LEN3 = 16
 
-MIN_NUM1 = 1
+MIN_NUM1 = 2
 MIN_NUM2 = 3
 MIN_NUM3 = 5
 
