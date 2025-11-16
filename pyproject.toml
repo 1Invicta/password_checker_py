@@ -1,0 +1,8 @@
+[project]
+name = "password_checker_py"
+version = "0.3.7"
+description = "A simple password strength checker."
+authors = [{ name="1Invicta" }]
+readme = "readme.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.7"
