@@ -484,13 +484,15 @@ def display_password_generator_menu(clear: bool):
                 clr_scr()
                 check_setting = None
                 continue
-            elif cmd not in [0, 9]:
+            elif cmd is not None and cmd not in [0, 9]:
                 DebugInput("warn", "Unavailable menu!", True, True)
                 clr_scr()
                 continue
             
             # generate handling
             if generate:
+                render_menu_header(2)
+                write_current_check_mode(check_setting, True, True)
                 pass
             
             #pre_chk = choose_menu(submenu="Checker/Generator")
