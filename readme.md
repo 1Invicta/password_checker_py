@@ -1,3 +1,8 @@
+![Python Version](https://img.shields.io/badge/python-3.x-yellow.svg)
+![GitHub License](https://img.shields.io/badge/license-Apache%202.0-blue)
+![Status](https://img.shields.io/badge/status-active-success.svg)
+
+
 # Password Checker (Python)
 
 A simple password-checking tool written in Python.
