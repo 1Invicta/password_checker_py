@@ -9,7 +9,7 @@ from pathlib import Path
 from colorama import Fore
 
 # [ Modules ] #
-from .variables import *
+from .variables import MIN_ENT1, MIN_ENT2, MIN_ENT3, MIN_LEN1, MIN_LEN2, MIN_LEN3, MIN_NUM1, MIN_NUM2, MIN_NUM3, MIN_SPL1, MIN_SPL2, MIN_SPL3, lc, uc, d, s, cw
 from .utils import DebugMsg, PrintColor
 
 # [ Wordlists ] #
@@ -21,11 +21,8 @@ file2_dir = wordlists_dir / "100k-most-used-passwords-NCSC.txt"
 
 with open(file1_dir, 'r', encoding='utf-8') as f:
     COMMON_10K = set(f.read().splitlines())
-
 with open(file2_dir, 'r', encoding='utf-8') as f:
     COMMON_100K = set(f.read().splitlines())
-
-
 
 
 
