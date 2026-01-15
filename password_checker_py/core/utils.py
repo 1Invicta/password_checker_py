@@ -23,7 +23,7 @@ def PrintColor(text: str, color=Fore.WHITE, style=Style.NORMAL): # type: ignore
 
 
 def DebugMsg(type: str, msg: str, newline: bool, wish_print: bool):
-    """Display debug message.
+    """Creates a custom debug message.
     \nTypes: 'error', 'warn', 'added', 'fix', 'removed', 'updated', 'tip' and 'info'.
     \n* newline: Insert newline before debug input.
     \n* wish_print: True = prints result | False = returns value (Useful for formatting)."""
