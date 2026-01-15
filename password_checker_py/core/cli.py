@@ -15,6 +15,11 @@ LATEST_UPDATE = changelog[-1]["version"]
 LATEST_UPDATE_DATE = changelog[-1]["date"]
 
 
+def display_version_info():
+    print(f"\n Current version: [{LATEST_UPDATE}]")
+    print(f" Last updated on: [{LATEST_UPDATE_DATE}]")
+
+
 
 # ======== Parse ======== #
 
@@ -59,12 +64,13 @@ def parse_args():
 
     args = parser.parse_args()
 
-    # ------------------------------
-    #      MUTUAL REQUIREMENTS
-    # ------------------------------
+    # ------------------------------ #
+    #      MUTUAL REQUIREMENTS       #
+    # ------------------------------ #
     if args.version:
         #display_latest_update(LATEST_UPDATE_DATE, LATEST_UPDATE, True)
-        print(f"\n [ver-{LATEST_UPDATE}] - {LATEST_UPDATE_DATE}")
+        #print(f"\n [ver-{LATEST_UPDATE}] - {LATEST_UPDATE_DATE}")
+        display_version_info()
         sys.exit(0)
     
     if len(sys.argv) == 1:
