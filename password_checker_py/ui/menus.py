@@ -10,8 +10,9 @@ from colorama import Fore, Style
 # [ Modules ] #
 from .visuals import header_box
 from ..core import checks as checks
-from ..data.changelog import changelog, repo_link
+from ..core.variables import feedback_msgs
 from ..core.generator import generate_password
+from ..data.changelog import changelog, repo_link
 from ..core.utils import DebugMsg, DebugInput, PrintColor, clr_scr, display_current_version, display_latest_update
 
 
@@ -94,6 +95,19 @@ def display_menu_title(menu_id: int, override: str=''):
     
     except Exception:
         DebugMsg("error", "An unexpected error occurred: 'display_menu_title' in 'menus.py'.", True, True)
+
+
+def display_mini_title(title: str, color=Fore.WHITE, style=Style.BRIGHT, custom_index: int=0): # type: ignore
+    """Displays a mini-title with Fore and Style using 'colorama'.\n* text: Text to color\n* color: Foreground color\n* style: Text style (BRIGHT, NORMAL or DIM)"""
+    if custom_index != 0:
+        print(f"\n  <[{PrintColor('#'+str(custom_index), Fore.LIGHTGREEN_EX)}] - [{PrintColor(title, color, style)}]>")
+    else:
+        print(f"\n  <===[{PrintColor(title, color, style)}]===>")
+
+
+def display_mini_sub_text(text: str, newline: bool = False):
+    """Displays a mini sub-text."""
+    print(f"{'\n' if newline else ''}   => {text}")
 
 
 def render_menu_header(menu_id: int, clear: bool=True):
@@ -288,14 +302,18 @@ def get_password_or_command(isGenerator: bool = False):
 
 def show_feedback():
     """Display feedback to improve password."""
-
-    if checks.cl: print("    * Make your password longer.")
-    if checks.cc: print("    * Use upper and lowercase characters.")
-    if checks.cd: print("    * Add digits.")
-    if checks.cs: print("    * Use special characters.")
-    if checks.cp: print("    * Avoid patterns in your password.")
-    if checks.cw: print("    * Find a less common password.")
-    if checks.ce: print("    * Make your password less obvious.")
+    count = 0
+    try:
+        if checks.cl: print("    * Make your password longer.");count+=1
+        if checks.cc: print("    * Use upper and lowercase characters.");count+=1
+        if checks.cd: print("    * Add digits.");count+=1
+        if checks.cs: print("    * Use special characters.");count+=1
+        if checks.cp: print("    * Avoid patterns in your password.");count+=1
+        if checks.cw: print("    * Find a less common password.");count+=1
+        if checks.ce: print("    * Make your password less obvious.");count+=1
+        if not count: print("    * Well done! No major feedback needed.")
+    except:
+        return
 
 
 def show_password_results(password: str, check_setting: int):
@@ -305,18 +323,18 @@ def show_password_results(password: str, check_setting: int):
         write_current_check_mode(check_setting, True)
         display_menu_title(1, override=PrintColor("Checking password", Fore.YELLOW, Style.BRIGHT))
 
+        #test = checks.Checker(check_setting)
+        #rating, desc, score = test.rate(password)
         rating, desc, score = checks.rate_password(password, check_setting)
 
-        print(f"\n  <===[{PrintColor("RESULTS", Fore.GREEN, Style.BRIGHT)}]===>")
-        print(f"   => This password is {desc}.")
-        print(f"   => Rating [{score}]")
+        #print(f"\n  <===[{PrintColor("RESULTS", Fore.GREEN, Style.BRIGHT)}]===>")
+        #print(f"   => This password is {desc}.")
+        #print(f"   => Rating [{score}]")
+        display_mini_title("RESULTS", Fore.GREEN, Style.BRIGHT)
+        display_mini_sub_text(f"This password is {desc}.")
+        display_mini_sub_text(f"Rating [{score}]")
 
-        messages = {
-            1: "Congratulations! Your password is safe.",
-            0: "Your password is alright, but you can make it stronger.",
-            -1: "Your password is weak! Make it stronger, add digits and special characters."
-        }
-        print(f"\n {messages.get(rating, '')}")
+        print(f"\n {feedback_msgs.get(rating, '')}")
     
     except Exception:
         DebugMsg("error", "An unexpected error occurred: 'show_password_results' in 'menus.py'.", True, True)
@@ -567,11 +585,45 @@ def display_help_menu(clear: bool):
         display_global_header(clear)
         display_menu_title(4)
         
+        display_mini_title("INFO", Fore.YELLOW)
         # menu content
-        DebugMsg("info", "Welcome to 'password_checker'!", True, True)
-        DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
-        DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
+        #DebugMsg("info", "Welcome to 'password_checker'!", True, True)
+        #DebugMsg("info", f"This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.", False, True)
+        #DebugMsg("info", f"For future updates, refer to this GitHub repository: {repo_link} ", False, True)
+        display_mini_sub_text("Welome to 'password_checker'!")
+        display_mini_sub_text("This tool is a prototype scripted in Python, but the real tool will be written in C and/or C#.")
+        display_mini_sub_text(f"For future updates, refer to this GitHub repository: '{repo_link}'.")
 
+        display_mini_title("MENUS", Fore.LIGHTBLUE_EX, custom_index=1)
+        display_mini_sub_text("[1] - Check password: type a password and get a score!")
+        display_mini_sub_text("[2] - Generate password: select a mode to get a randomly generated password.")
+        display_mini_sub_text("[3] - Changelog: see past updates and changes made to the tool.")
+        display_mini_sub_text("[4] - Help: you're here!")
+        display_mini_sub_text("[9] - Exits the tool.")
+        DebugMsg("tip", "You can type Ctrl+C to safely quit the tool from any menu!", False, True)
+
+        display_mini_title("MODES", Fore.LIGHTBLUE_EX, custom_index=2)
+        display_mini_sub_text("[1] - Basic/Simple: the default and easiest mode to use.")
+        display_mini_sub_text("[2] - Medium/Balanced: good for general-purpose safety.")
+        display_mini_sub_text("[3] - Strong/Secure: the maximum safety!")
+
+        display_mini_title("TERMINAL ARGUMENTS", Fore.LIGHTBLUE_EX, custom_index=3)
+        DebugMsg("warn", "Terminal arguments can only be used outside this user interface\n \t You can use the following tags when executing this tool:", False, True)
+        
+        display_mini_sub_text("'-h/--help' - List argument tags, their descriptions and use-case examples", True)
+        display_mini_sub_text("'-v/--version' - Display the tool's current version information", True)
+        
+        display_mini_sub_text("'-p/--password' - The password to check", True)
+        display_mini_sub_text("'-cm/--check-mode' - Check mode of choice (1, 2 or 3)")
+        display_mini_sub_text("Example: password_checker_py -p [PASSWORD (ex: 'test123')] -cm [CHECK-MODE (ex: 1)]")
+        
+        display_mini_sub_text("-g/--generate' - Generates a password", True)
+        display_mini_sub_text("Example: password_checker_py -g -cm [CHECK-MODE (ex: 2)]")
+
+        display_mini_sub_text("'-o/--output' - Saves results in a file (JSON)", True)
+        display_mini_sub_text("Example: password_checker_py -g -cm [CHECK-MODE (ex: 3)] -o [OUTPUT file-name (ex: 'pizza')]")
+
+        
         DebugMsg("warn", "NOTE: This tool is still under development", True, True)
 
         list_options(3, True)
