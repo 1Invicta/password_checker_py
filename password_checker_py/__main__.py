@@ -1,22 +1,30 @@
 # [ main.py ] #
 
+# Scripted by Invicta
 
-# ========================= NOTES ========================== #
+# ======================== INFO ============================ #
 
-# (variables.py): holds global variables and constants
-# (visuals.py): holds CLI user interface constants
-# (utils.py): helper and debugging functions
+# --- [CORE] ----------------------------------------------- #
 # (checks.py): password check and score system
+# (cli.py): handles terminal argument functionality
 # (generator.py): generates password with given check mode
-# (menus.py): menus handler (each menu has its own submenu)
+# (utils.py): helper and debugging functions
+# (variables.py): holds global variables and constants
+
+# --- [DATA] ----------------------------------------------- #
 # (changelog.py): stores all past updates
-# (main.py): main loop (wrapper for everything)
+# (save.py): saves check results to JSON file
+
+# --- [UI] ------------------------------------------------- #
+# (menus.py): menus handler (each menu has its own submenu)
+# (visuals.py): holds CLI user interface constants
+
+# --- [/] -------------------------------------------------- #
+# (__main__.py): main loop (wrapper for everything)
 
 # ========================================================== #
 
 
-# FUTURE (ver-0.4.0):
-# [/] - implement OOP for (checks.py)
 
 
 
@@ -104,13 +112,14 @@ def main():
         res = rate_password(args.password, args.check_mode, False) # type: ignore
         rescalc = res[2]
         #finalres = f"{rescalc:.2f}"
-        print(f"Password score: {rescalc}")
+        print(f"Score: {rescalc}")
         if args.output:
             save_result(args.password, args.check_mode, rescalc, res[1], args.output)
     
     elif args.generate is not None: # type: ignore
         pwd = generate_password(args.check_mode, False) # type: ignore
         print(f"Generated password: {pwd}")
+        print(f"Score: {rate_password(pwd, args.check_mode, False)[2]}")
         if args.output:
             save_result(pwd, args.check_mode, rate_password(pwd, args.check_mode, False)[2], rate_password(pwd, args.check_mode, False)[1], args.output)
 
