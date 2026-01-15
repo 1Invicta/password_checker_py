@@ -162,5 +162,15 @@ changelog = [
             ("fix", "Corrected module imports and resolved inconsistencies \n\twith argument handling and nested f-string return values"),
             ("fix", "Adjusted password check mode requirements")
         ]
+    },
+    {
+        # hotfixes patch
+        "date": "15/01/2026",
+        "version": "0.3.8",
+        "changes":
+        [
+            ("fix", "Fixed password check feedback bugs"),
+            ("fix", "Improved user interface for argument results")
+        ]
     }
 ]
