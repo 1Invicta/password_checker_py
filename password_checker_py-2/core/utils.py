@@ -93,7 +93,7 @@ def DebugInput(type: str, msg: str, newline: bool, wish_print: bool):
 def clr_scr():
     """Clears terminal using 'os' library.\nAdapts to user OS."""
     try:
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls' if os.name == "nt" else "clear")
     except:
         DebugMsg("error", "An error occurred: 'clr_scr' in 'utils.py'.", True, True)
 
@@ -112,14 +112,18 @@ def cmd_title(title: str):
 
 def display_latest_update(lastUpdate: str, version: str, isLatestUpdate: bool):
     try:
-        print(f"\n * {lastUpdate} - [{Fore.LIGHTGREEN_EX if isLatestUpdate else Fore.GREEN}ver-{version}{Style.RESET_ALL}]")
+        if isLatestUpdate: 
+            print(f"\n * {lastUpdate} - [{Fore.LIGHTGREEN_EX}ver-{version}{Style.RESET_ALL}]")
+        else:
+            print(f"\n * {lastUpdate} - [{Fore.GREEN}ver-{version}{Style.RESET_ALL}]")
     except:
         DebugMsg("error", "An error occurred: 'display_latest_update' in 'utils.py'.", True, True)
 
 
 def display_current_version(current_ver: str):
     try:
-        print(f"\n <Current>: [{PrintColor(f"version-{current_ver}", Fore.GREEN, Style.BRIGHT)}]")
+        colored_version = PrintColor(f"version-{current_ver}", Fore.LIGHTGREEN_EX)
+        print(f"\n <Current>: [{colored_version}]")
     except:
         DebugMsg("error", "An error occurred: 'display_current_version' in 'utils.py'.", True, True)
 

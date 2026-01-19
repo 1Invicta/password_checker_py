@@ -7,7 +7,7 @@
 import secrets
 
 # [ Modules ] #
-from .variables import lc, uc, d, s, MIN_LEN1, MIN_LEN2, MIN_LEN3
+from .variables import lc, uc, d, s, MIN_LEN, MIN_LEN, MIN_LEN
 
 
 
@@ -27,15 +27,15 @@ def generate_password(type: int = 1, verbose: bool=True):
     # === settings per type === #
     if type == 1:
         charset = lc + uc
-        length = MIN_LEN1
+        length = MIN_LEN[1]
     
     elif type == 2:
         charset = lc + uc + d
-        length = MIN_LEN2
+        length = MIN_LEN[2]
     
     elif type == 3:
         charset = lc + uc + d +s
-        length = MIN_LEN3
+        length = MIN_LEN[3]
     
     # === generate password === #
     password = ''.join(secrets.choice(charset) for _ in range(length))

@@ -172,5 +172,15 @@ changelog = [
             ("fix", "Fixed password check feedback bugs"),
             ("fix", "Improved user interface for argument results")
         ]
+    },
+    {
+        # linux support fixing f-strings
+        "date": "19/01/2026",
+        "version": "0.3.9",
+        "changes":
+        [
+            ("fix", "Fixed feedback message errors"),
+            ("fix", "Removed more nested f-strings")
+        ]
     }
 ]

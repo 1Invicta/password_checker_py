@@ -10,7 +10,7 @@ from colorama import Fore, Style
 # [ Modules ] #
 from .visuals import header_box
 from ..core import checks as checks
-from ..core.variables import feedback_msgs
+from ..core.variables import feedback_msgs, cl, cc, cd, ce, cs, cp, cw
 from ..core.generator import generate_password
 from ..data.changelog import changelog, repo_link
 from ..core.utils import DebugMsg, DebugInput, PrintColor, clr_scr, display_current_version, display_latest_update
@@ -304,13 +304,13 @@ def show_feedback():
     """Display feedback to improve password."""
     count = 0
     try:
-        if checks.cl: print("    * Make your password longer.");count+=1
-        if checks.cc: print("    * Use upper and lowercase characters.");count+=1
-        if checks.cd: print("    * Add digits.");count+=1
-        if checks.cs: print("    * Use special characters.");count+=1
-        if checks.cp: print("    * Avoid patterns in your password.");count+=1
-        if checks.cw: print("    * Find a less common password.");count+=1
-        if checks.ce: print("    * Make your password less obvious.");count+=1
+        if cl: print("    * Make your password longer.");count+=1
+        if cc: print("    * Use upper and lowercase characters.");count+=1
+        if cd: print("    * Add digits.");count+=1
+        if cs: print("    * Use special characters.");count+=1
+        if cp: print("    * Avoid patterns in your password.");count+=1
+        if cw: print("    * Find a less common password.");count+=1
+        if ce: print("    * Make your password less obvious.");count+=1
         if not count: print("    * Well done! No major feedback needed.")
     except:
         return
