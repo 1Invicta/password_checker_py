@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-        "name": "Debug password_checker_py",
-        "type": "debugpy",
-        "request": "launch",
-        "module": "password_checker_py",
-        "cwd": "${workspaceFolder}"
+            "name": "Debug python-linux",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "password_checker_py-2",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Debug python-main",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "password_checker_py",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
