@@ -9,7 +9,7 @@ from pathlib import Path
 from colorama import Fore
 
 # [ Modules ] #
-from .variables import MIN_ENT1, MIN_ENT2, MIN_ENT3, MIN_LEN1, MIN_LEN2, MIN_LEN3, MIN_NUM1, MIN_NUM2, MIN_NUM3, MIN_SPL1, MIN_SPL2, MIN_SPL3, lc, uc, d, s, cw
+from ..data import data
 from .utils import DebugMsg, PrintColor
 
 # [ Wordlists ] #
@@ -26,10 +26,22 @@ with open(file2_dir, 'r', encoding='utf-8') as f:
 
 
 
+# DIRECT REQUIREMENTS AND ALPHANUM REFERENCE
+MIN_LEN = data.MIN_LEN
+MIN_NUM = data.MIN_NUM
+MIN_SPL = data.MIN_SPL
+MIN_ENT = data.MIN_ENT
+lc = data.lc
+uc = data.uc
+d = data.d
+s = data.s
+
+
+
 
 # ======== Checks ======== #
 
-def check_len(passwd: str, type: int=0, verbose: bool=True):
+def check_len(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks the length of the password."""
     global cl
 
@@ -37,30 +49,25 @@ def check_len(passwd: str, type: int=0, verbose: bool=True):
     try:
         length = len(passwd)
 
-        if type == 1:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_LEN1<=length else 'error'}", f"Length: [{length}/{MIN_LEN1}]", False, True)
-            if MIN_LEN1 <= length: cl=False; return 1
-            else: cl=True; return 0
-            
-        elif type == 2:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_LEN2<=length else 'error'}", f"Length: [{length}/{MIN_LEN2}]", False, True)
-            if MIN_LEN2 <= length: cl=False; return 1
-            else: cl=True; return 0
-            
-        elif type == 3:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_LEN3<= length else 'error'}", f"Length: [{length}/{MIN_LEN3}]", False, True)
-            if MIN_LEN3 <= length: cl=False; return 1
-            else: cl=True; return 0
-
-        else:
+        if checkmode not in [1, 2, 3]:
             if verbose: DebugMsg("error", f"No specified length: [{length}]", False, True)
             return 0
+        
+        pre = "load-ok" if MIN_LEN[checkmode] <= length else "error"
+
+        if verbose:
+            DebugMsg(pre, f"Length: [{length}/{MIN_LEN[checkmode]}]", False, True)
+        
+        if MIN_LEN[checkmode] <= length:
+            data.cl=False; return 1
+        else: data.cl=True; return 0
+
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_len' in 'checks.py'.", True, True)
         return 0
 
 
-def check_case(passwd: str, type: int=0, verbose: bool=True):
+def check_case(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks for upper and lowercases in the password."""
     global cc
 
@@ -69,25 +76,26 @@ def check_case(passwd: str, type: int=0, verbose: bool=True):
         uc = any(c.isupper() for c in passwd)
         lc = any(c.islower() for c in passwd)
         
-        if type == 1:
+        if checkmode == 1:
             if uc or lc:
-                if verbose: DebugMsg("load-ok", f"{"Uppsercase" if uc else "Lowercase"} found", False, True)
-                cc = False
+                mid = "Uppercase" if uc else "Lowercase"
+                if verbose: DebugMsg("load-ok", mid + "found", False, True)
+                data.cc = False
                 return 1
-            if verbose: DebugMsg("error", f"Upper and/or lower case not found", False, True)
-            cc = True
+            if verbose: DebugMsg("error", "Upper and/or lower case not found", False, True)
+            data.cc = True
             return 0
         
-        elif 2 <= type:
+        elif 2 <= checkmode:
             if uc and lc:
-                if verbose: DebugMsg("load-ok", f"Upper and lower case found", False, True)
-                cc = False
+                if verbose: DebugMsg("load-ok", "Upper and lower case found", False, True)
+                data.cc = False
                 return 1
-            if verbose: DebugMsg("error", f"Upper and/or lower case not found", False, True)
+            if verbose: DebugMsg("error", "Upper and/or lower case not found", False, True)
             return 0
         
         else:
-            cc = True
+            data.cc = True
             return 0
         
     except:
@@ -95,10 +103,14 @@ def check_case(passwd: str, type: int=0, verbose: bool=True):
         return 0
 
 
-def check_digit(passwd: str, type: int=0, verbose: bool=True):
+def check_digit(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks for digits in the password."""
     global cd
 
+    if checkmode <= 0 or checkmode > 3:
+        checkmode= 2
+    REQUIREMENT = MIN_NUM[checkmode]
+    
     if verbose: DebugMsg("fix", "Chekcing digits...", True, True)
     try:
         td = 0
@@ -106,29 +118,24 @@ def check_digit(passwd: str, type: int=0, verbose: bool=True):
             if c.isdigit():
                 td += 1
         
-        if type == 1:
-            if verbose: DebugMsg(f"{"load-ok" if td>=MIN_NUM1 else "error"}", f"Digits: {td}", False, True)
-            if td >= MIN_NUM1: cd=False; return 1
-            else: cd=True; return 0
+        pre = "load-ok" if REQUIREMENT<=td else "error"
+        if verbose: DebugMsg(pre, f"Digits: {td}/{REQUIREMENT}", False, True)
         
-        elif type == 2:
-            if verbose: DebugMsg(f"{"load-ok" if td>=MIN_NUM2 else "error"}", f"Digits: {td}", False, True)
-            if td >= MIN_NUM2: cd=False; return 1
-            else: cd=True; return 0
-        
-        elif type == 3:
-            if verbose: DebugMsg(f"{"load-ok" if td>=MIN_NUM3 else "error"}", f"Digits: {td}", False, True)
-            if td >= MIN_NUM3: cd=False; return 1
-            else: cd=True; return 0
+        if REQUIREMENT <= td:
+            data.cd = False; return 1
+        else:
+            data.cd = True; return 0
 
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_digit' in 'checks.py'.", True, True)
         return 0
 
 
-def check_special(passwd: str, type: int=0, verbose: bool=True):
+def check_special(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks for special characters in the password."""
     global cs
+
+    REQUIREMENT = MIN_SPL[checkmode]
 
     if verbose: DebugMsg("fix", "Checking for special characters...", True, True)
     try:
@@ -137,83 +144,83 @@ def check_special(passwd: str, type: int=0, verbose: bool=True):
             if not c.isalnum():
                 ts += 1
 
-        if type == 1:
-            if verbose: DebugMsg(f"{"load-ok" if ts>=MIN_SPL1 else "error"}", f"Special characters: {ts}", False, True)
-            if ts>=MIN_SPL1: cs=False; return 1
-            else: cs=True; return 0
+        if checkmode in [1, 2, 3]:
+            pre = "load-ok" if REQUIREMENT<=ts else "error"
+            if verbose: DebugMsg(pre, f"Special characters: {ts}/{REQUIREMENT}", False, True)
+
+            if REQUIREMENT <= ts:
+                data.cs = False; return 1
+            else:
+                data.cs = True; return 0
         
-        elif type == 2:
-            if verbose: DebugMsg(f"{"load-ok" if ts>=MIN_SPL2 else "error"}", f"Special characters: {ts}", False, True)
-            if ts>=MIN_SPL2: cs=False; return 1
-            else: cs=True; return 0
-        
-        elif type == 3:
-            if verbose: DebugMsg(f"{"load-ok" if ts>=MIN_SPL3 else "error"}", f"Special characters: {ts}", False, True)
-            if ts>=MIN_SPL3: cs=False; return 1
-            else: cs=True; return 0
-        
-        else: cs=True; return 0
+        else: data.cs = True; return 0
         
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_special' in 'checks.py'.", True, True)
         return 0
 
 
-def check_pattern(passwd: str, type: int=0, verbose: bool=True):
+def check_pattern(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks for patterns in the password."""
     global cp
     
     try:
+        pattern_check = passwd not in (passwd+passwd)
+        pre = "load-ok" if pattern_check else "error"
+        mid = "Pattern not found." if pattern_check else "Pattern found!"
+
         if verbose: DebugMsg("fix", "Checking for patterns...", True, True)
-        if verbose: DebugMsg(f"{"load-ok" if passwd not in (passwd+passwd)[1:-1] else "error"}", f"{"Pattern not found." if passwd not in (passwd + passwd)[1:-1] else "Pattern found!"}", False, True)
-        if passwd not in (passwd+passwd)[1:-1]: cp = False
-        else: cp = True
-        return 0 if passwd in (passwd + passwd)[1:-1] else 1
+        if verbose: DebugMsg(pre, mid, False, True)
+        if pattern_check: data.cp = False
+        else: data.cp = True
+        return 0 if pattern_check else 1
     
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_pattern' in 'checks.py.", True, True)
 
 
-def check_seclist(passwd: str, type: int=0, verbose: bool=True):
+def check_seclist(passwd: str, checkmode: int=0, verbose: bool=True):
     """Checks if the password is present in one of the wordlists (currently 10k or 100k)."""
     global cw
 
+    if checkmode == 2:
+        # 10k check => common check
+        wordlist = COMMON_10K
+        verbose_msg = "Searching in 10k most common passwords..."
+        warn_type = "error"
+        warn_msg = "ATTENTION: Password found in very common wordlist!"
+        
+    elif checkmode == 3:
+        # 100k check => strong check
+        wordlist = COMMON_100K
+        verbose_msg = "Searching in 100k most common passwords..."
+        warn_type = "warn"
+        warn_msg = "ALERT: Password found in common wordlist!"
+    
+    else: return 0
+    
     try:
-        if type == 2:
-            # 10k check => common check
-            if verbose: DebugMsg("fix", "Comparing to 10k most common passwords...", True, True)
-            if passwd in COMMON_10K:
-                if verbose: DebugMsg("error", "ATTENTION: Password found in very common database!", False, True)
-                cw = True
-                return -1
-            cw = False
-            if verbose: DebugMsg("load-ok", "Not found", False, True)
-            return 0
-        
-        elif type == 3:
-            # 100k check => strong check
-            if verbose: DebugMsg("fix", "Comparing to 100k most common passwords...", True, True)
-            if passwd in COMMON_100K:
-                if verbose: DebugMsg("warn", "ALERT: Password found in common database!", False, True)
-                cw = True
-                return -1
-            cw = False
-            if verbose: DebugMsg("load-ok", "Not found", False, True)
-            return 0
-        
-        else:
-            return 0
+        if verbose: DebugMsg("fix", verbose_msg, True, True)
+        if passwd in wordlist:
+            if verbose: DebugMsg(warn_type, warn_msg, False, True)
+            data.cw = True
+            return -1
+        data.cw = False
+        if verbose: DebugMsg("load-ok", "Not found", False, True)
+        return 0
         
     except:
         DebugMsg("error", "An unexpected error occurred: 'check_seclist' in 'checks.py'.", True, True)
         return 0
 
 
-def check_entropy(passwd: str, type: int=0, verbose: bool=True):
+def check_entropy(passwd: str, checkmode: int=0, verbose: bool=True):
     """Uses Shannon's Theorem to determine the password's entropy in bits.
     \nChange the minimum requirement with the 'type' argument."""
     global ce
     
+    REQUIREMENT = MIN_ENT[checkmode]
+
     if verbose: DebugMsg("fix", "Checking entropy...", True, True)
     try:
         # character pool
@@ -250,23 +257,16 @@ def check_entropy(passwd: str, type: int=0, verbose: bool=True):
 
         rounded_entropy = round(entropy, 2)
 
-        if type == 1:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_ENT1<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / [{MIN_ENT1}] bits", False, True)
-            if MIN_ENT2 <= rounded_entropy: ce=False; return 1
-            else: ce=True; return 0
+        if checkmode in [1, 2, 3]:
+            entropy_check = REQUIREMENT <= rounded_entropy
             
-        elif type == 2:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_ENT2<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT2} bits", False, True)
-            if MIN_ENT2 <= rounded_entropy: ce=False; return 1
-            else: ce=True; return 0
-            
-        elif type == 3:
-            if verbose: DebugMsg(f"{"load-ok" if MIN_ENT3<=rounded_entropy else "error"}", f"Entropy: [{rounded_entropy}] bits / {MIN_ENT3} bits", False, True)
-            if MIN_ENT3 <= rounded_entropy: ce=False; return 1
-            else: ce=True; return 0
+            pre = "load-ok" if entropy_check else "error"
+            if verbose: DebugMsg(pre, f"Entropy: [{rounded_entropy}] bits / [{REQUIREMENT}] bits", False, True)
+            if entropy_check: data.ce = False; return 1
+            else: data.ce = True; return 0
             
         else:
-            if verbose: DebugMsg("error", f"Entropy: [{rounded_entropy}]", False, True)
+            if verbose: DebugMsg("error", f"Entropy: [{rounded_entropy}] bits", False, True)
             return 0
         
     except:
@@ -280,9 +280,11 @@ def check_entropy(passwd: str, type: int=0, verbose: bool=True):
 
 # ======== Result ======== #
 
-def rate_password(passwd: str, check_mode: int=0, verbose: bool=True):
+def rate_password(passwd: str, check_mode: int=0, verbose: bool=True, user_stats: dict=None):
     """Rates the password based on various checks."""
     try:
+        user_stats["total_length_sum"] += len(passwd)
+        
         checks = [check_len, check_case, check_digit, check_special, check_pattern, check_seclist, check_entropy]
         results = [func(passwd, check_mode, verbose) for func in checks]
         
@@ -292,17 +294,25 @@ def rate_password(passwd: str, check_mode: int=0, verbose: bool=True):
         score = round(total / len(checks), 2)
         if verbose: DebugMsg("load-ok", "Calculated rating", False, True)
 
+        user_stats["passwords_tested"] += 1
+
         if 0.8 <= score:
-            if verbose: return 1, f"[{PrintColor("Strong", Fore.GREEN)}]", score
+            msg = PrintColor("Strong", Fore.GREEN)
+            if verbose: return 1, f"[{msg}]", score
             return 1, "Strong", score
+        
         elif 0.5 <= score < 0.8:
-            if verbose: return 0, f"[{PrintColor("Moderate", Fore.YELLOW)}]", score
+            msg = PrintColor("Moderate", Fore.YELLOW)
+            if verbose: return 0, f"[{msg}]", score
             return 1, "Moderate", score
+        
         else:
-            if verbose: return -1, f"[{PrintColor("Weak", Fore.RED)}]", score
+            msg = PrintColor("Weak", Fore.RED)
+            if verbose: return -1, f"[{msg}]", score
             return 1, "Weak", score
     
     except:
         DebugMsg("error", "An unexpected error occurred: 'rate_password' in 'checks.py'.", True, True)
-        return 0, f"[{PrintColor("Error", Fore.LIGHTRED_EX)}]", score
+        msg = PrintColor("Error", Fore.LIGHTRED_EX)
+        return 0, f"[{msg}]", score
 
