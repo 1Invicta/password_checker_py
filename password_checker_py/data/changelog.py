@@ -172,5 +172,19 @@ changelog = [
             ("fix", "Fixed password check feedback bugs"),
             ("fix", "Improved user interface for argument results")
         ]
-    }
+    },
+    {
+        # hotfixes patch
+        "date": "25/01/2026",
+        "version": "0.3.9",
+        "changes":
+        [
+            ("added", "Added logo in main menu"),
+            ("added", "Implemented user stats and logging system"),
+            ("fix", "Renamed files for simplicity"),
+            ("fix", "Created new files for unrelated/helper functions from menus.py elsewhere"),
+            ("fix", "Simplified newline f-strings for older python version support"),
+            ("fix", "All feedback message bugs exterminated from the face of the earth")
+        ]
+    },
 ]
