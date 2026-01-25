@@ -4,10 +4,11 @@
 # ======== Setup ======== #
 
 # [ Libraries ] #
-import secrets
+import secrets, logging
+logger = logging.getLogger(__name__)
 
 # [ Modules ] #
-from .variables import lc, uc, d, s, MIN_LEN1, MIN_LEN2, MIN_LEN3
+from ..data.data import lc, uc, d, s, MIN_LEN
 
 
 
@@ -16,30 +17,33 @@ from .variables import lc, uc, d, s, MIN_LEN1, MIN_LEN2, MIN_LEN3
 
 # ======= Generate ======= #
 
-def generate_password(type: int = 1, verbose: bool=True):
+def generate_password(checkmode: int = 1, verbose: bool=True, user_stats: dict=None):
     from .utils import DebugMsg
 
     if verbose: DebugMsg("info", "Generating password...", False, True)
     
-    if type not in [1, 2, 3]:
-        type = 1
+    if checkmode not in [1, 2, 3]:
+        checkmode = 1
     
+    REQUIREMENT = MIN_LEN[checkmode]
+
     # === settings per type === #
-    if type == 1:
+    if checkmode == 1:
         charset = lc + uc
-        length = MIN_LEN1
     
-    elif type == 2:
+    elif checkmode == 2:
         charset = lc + uc + d
-        length = MIN_LEN2
     
-    elif type == 3:
-        charset = lc + uc + d +s
-        length = MIN_LEN3
+    elif checkmode == 3:
+        charset = lc + uc + d + s
     
     # === generate password === #
-    password = ''.join(secrets.choice(charset) for _ in range(length))
+    password = ''.join(secrets.choice(charset) for _ in range(REQUIREMENT))
+    
+    user_stats["passwords_generated"] += 1
+    
     if verbose: DebugMsg("info", "Password generated.", False, True)
 
+    logger.info("Generated password, check-mode=%d", {checkmode})
     return password
 
