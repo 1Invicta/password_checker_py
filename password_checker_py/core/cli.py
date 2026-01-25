@@ -1,29 +1,49 @@
-# [ cli.py ]
+# [ cli.py ] #
 
 
 # ======== Setup ======== #
 
-# [ Libraries ]
-import sys, argparse
-#from colorama import Fore, Style
+# [ Libraries ] #
+import sys, argparse, logging
+from pathlib import Path
 
-# [ Modules ]
+# [ Modules ] #
 from ..data.changelog import changelog
-#from .utils import display_latest_update
+from ..data.logging_config import setup_logging
 
+# [ Information ] #
 LATEST_UPDATE = changelog[-1]["version"]
 LATEST_UPDATE_DATE = changelog[-1]["date"]
 
-
+# [ Helper ] #
 def display_version_info():
-    print(f"\n Current version: [{LATEST_UPDATE}]")
+    newline = "\n"
+    print(f"{newline} Current version: [{LATEST_UPDATE}]")
     print(f" Last updated on: [{LATEST_UPDATE_DATE}]")
 
+def display_user_stats(user_stats: dict=None):
+    session_time_minutes = f"{int(user_stats["total_sessions_seconds"]// 60)}"
+    session_time_seconds = f"{int(user_stats["total_sessions_seconds"] % 60)}"
+    total_session_time = session_time_minutes+"m" + session_time_seconds+"s"
+    newline = "\n"
+    
+    print(f"{newline}-> First used:              {user_stats["first_used"]}")
+    print(f" * Tool starts:             {user_stats["starts"]:,}")
+    print(f" * Total session time:      {total_session_time}")
+    print(f" * Passwords tested:        {user_stats["passwords_tested"]:,}")
+    
+    if user_stats["passwords_tested"] > 0:
+        avg_len = user_stats["total_length_sum"] / user_stats["passwords_tested"]
+        print(f" * Average password length: {avg_len:.1f} characters")
+    else: print(f" * Average password length: ---")
+    
+    print(f" * Passwords generated:     {user_stats["passwords_generated"]}")
+    print(f"{newline}-> Last used:               {user_stats["last_used"]}")
 
 
 # ======== Parse ======== #
 
-def parse_args():
+def parse_args(user_stats=None):
     """Parses command-line arguments."""
     parser = argparse.ArgumentParser(
         prog="password_checker_py",
@@ -51,28 +71,54 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-s", "--stats",
+        action="store_true",
+        help="Display tool usage statistics"
+    )
+    
+    parser.add_argument(
         "-v", "--version",
         action="store_true",
         help="Display version information"
     )
 
     parser.add_argument(
+        "-l", "--log", 
+        action="store_true", 
+        help="Write log file")
+    parser.add_argument("--log-dir", default=Path(__file__).parent.parent / "data" /"logs")
+    parser.add_argument(
+        "--verbose", 
+        action="store_true",
+        help="Enable debug-level logging (requires --log)")
+
+    parser.add_argument(
         "-o", "--output",
         type=str,
-        help="Output results to a JSON file"
+        help="Output results to a JSON (JSONL) file"
     )
 
     args = parser.parse_args()
+    level = logging.DEBUG if args.verbose else logging.INFO
+    setup_logging(
+        log_to_file=args.log,
+        log_dir=args.log_dir,
+        level=level
+    )
+    logger = logging.getLogger(__name__)
+    logger.info("Logging system initialised.")
 
     # ------------------------------ #
     #      MUTUAL REQUIREMENTS       #
     # ------------------------------ #
     if args.version:
-        #display_latest_update(LATEST_UPDATE_DATE, LATEST_UPDATE, True)
-        #print(f"\n [ver-{LATEST_UPDATE}] - {LATEST_UPDATE_DATE}")
         display_version_info()
         sys.exit(0)
     
+    if args.stats:
+        display_user_stats(user_stats)
+        sys.exit(0)
+
     if len(sys.argv) == 1:
         return None
     
