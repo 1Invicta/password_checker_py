@@ -1,4 +1,4 @@
-# [ utils.py ] #
+# [ save.py ] #
 
 
 # ======== Setup ======== #
@@ -8,10 +8,14 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+# [ Information ] #
 OUTPUT_FILE = Path("password_results.json")
 
+
+# ======== Save ========= #
+
 def save_result(password: str, mode: int, score: str, result: str, keyword: str):
-    """Save password check/generation result to a JSON file."""
+    """Apend a  password check/generation result to a JSON (JSONL) file."""
     entry = {
         "timestamp": datetime.now().isoformat(),
         "password": password,
@@ -21,17 +25,7 @@ def save_result(password: str, mode: int, score: str, result: str, keyword: str)
         "keyword": keyword
     }
 
-    if OUTPUT_FILE.exists():
-        with open(OUTPUT_FILE, "r") as f:
-            try:
-                data = json.load(f)
-            except json.JSONDecodeError:
-                data = []
-            
-    else:
-        data = []
-    
-    data.append(entry)
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    with open(OUTPUT_FILE, "a") as f:
+        json.dump(entry, f)
+        f.write("\n")
     
