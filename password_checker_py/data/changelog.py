@@ -187,4 +187,17 @@ changelog = [
             ("fix", "All feedback message bugs exterminated from the face of the earth")
         ]
     },
+    {
+        # final update, anything else will most likely only consist of bug hotfixes and feature tweaking
+        "date": "05/03/2026",
+        "version": "0.4.0",
+        "changes":
+        [
+            ("added", "Added multi-password checking and generation"),
+            ("added", "Implemented password checking from files (.txt and .json)"),
+            ("fix", "Fixed user statistics and logging inconsistencies"),
+            ("fix", "Reformatted codebase for readability and increased performance"),
+            ("fix", "Improved README file for documentation")
+        ]
+    }
 ]

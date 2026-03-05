@@ -5,40 +5,64 @@
 
 # [ Libraries ] #
 import logging
+
 logger = logging.getLogger(__name__)
 
+from inputimeout import inputimeout, TimeoutOccurred
+
 # [ Modules ] #
-from ..core.utils import DebugMsg, DebugInput, clr_scr
-from .visuals import write_current_check_mode, list_password_check_modes, render_menu_header, list_options
+from ..core.utils   import DebugMsg, DebugInput, clr_scr
+from .visuals       import write_current_check_mode, list_password_check_modes, render_menu_header, list_options
+
 
 
 
 # ======= Functions ====== #
-def choose_menu(easter_egg: bool=False, submenu: str=""):
+def choose_menu( easter_egg: bool=False, submenu: str="", timeout_s: float=0.0 ):
     """Displays cmd-style input."""
+    
+    logger.info("'choose_menu' executed: easter_egg=%s, submenu=%s", easter_egg, submenu)
+
     try:
         newline = "\n"
+        
         simulated_dir = '/' + submenu if submenu != '' else ''
-        #user_input = input(f"\n<CMD{f"/{submenu}" if submenu != "" else ""}>: ")
-        user_input = input(f"{newline}<CMD{simulated_dir}>: ")
+        text = f"{newline}<CMD{simulated_dir}>: "
+        
+        if timeout_s is None or timeout_s == 0.0:
+            user_input = input(text)
+        
+        else:
+            user_input = inputimeout(prompt=text, timeout=timeout_s)
+        
         if user_input == '' or not user_input:
+            
             return 0
+        
         elif  easter_egg and user_input in ("1Invicta", "Invicta"):
             DebugInput("tip", "That's me! ", True, True)
+            
             return 0
+        
         try:
             return int(user_input)
+        
         except ValueError:
             return 0
 
+    except TimeoutOccurred:
+        return None
+    
     except Exception as e:
         logger.error(e, exc_info=True)
         DebugMsg("error", "An unexpected error occurred: 'choose_menu' in 'menus.py'.", True, True)
+        
         return 0
 
 
-def password_options(useGenerator: bool=False, submenu: str = ""):
+def password_options( useGenerator: bool=False, submenu: str = "" ):
     """Handles input choice for password check mode."""
+    
     try:
         list_password_check_modes(isGenerator=useGenerator)
 
@@ -61,17 +85,22 @@ def password_options(useGenerator: bool=False, submenu: str = ""):
                 clr_scr()
                 return 9
             
-            else:
-                DebugMsg("warn", f"No available option given: Using [{write_current_check_mode(1, isGenerator=useGenerator)}] settings!", True, True)
-                DebugInput("System", "Type Enter to continue...", False, True)
-                return 1
+            logger.debug("Invalid option: 'password_options'.")
+            DebugMsg("warn", f"No available option given: Using [{write_current_check_mode(1, isGenerator=useGenerator)}] settings!", True, True)
+            DebugInput("System", "Type Enter to continue...", False, True)
+            
+            return 1        # use default checkmode
     
     except Exception:
+        logger.warning("Exception found: ", exc_info=True)
         DebugMsg("error", "An unexpected error occurred: 'password_options' in 'menus.py'.", True, True)
 
 
-def get_password_or_command(isGenerator: bool = False):
+def get_password_or_command( isGenerator: bool = False ):
     """Returns a tuple (command, password) from user input."""
+    
+    logger.info("'get_password_or_command' executed: isGenerator=%s", isGenerator)
+    
     try:
         newline = "\n"
 
@@ -80,6 +109,7 @@ def get_password_or_command(isGenerator: bool = False):
             if not userinput:
                 DebugMsg("warn", "Empty input. Please enter a password.", False, True)
                 DebugInput("tip", "Press Enter to retry...", False, True)
+                
                 return None, None
             
             # userinput is either command or password
@@ -90,45 +120,59 @@ def get_password_or_command(isGenerator: bool = False):
                 return None, userinput
         
         userinput = input(f"{newline}<CMD/password_checker_py>: ").strip()
+        
         if not userinput:
             return None, True
+        
         try:
             return int(userinput), None
+        
         except ValueError:
             return None, userinput
     
     except Exception:
+        logger.warning("Exception found: ", exc_info=True)
         DebugMsg("error", "An unexpected error occured: 'get_password_or_command' in 'menus.py'.", True, True)
 
 
-def retry_query(isGenerator: bool = False):
+def retry_query( isGenerator: bool = False ):
     """Queries user to retry for a password check."""
+    
+    logger.info("'retry_query' executed.")
+
     try:
         newline = "\n"
 
         while True:
             user_input = input(f"{newline}<CMD/password_checker_py>: " if not isGenerator else f"{newline}<CMD/checker/generator>")
+            logger.info("user_input= %s", user_input)
 
             if user_input == "0":
+                
                 return 0
             
             elif user_input == "1":
                 clr_scr()
+                
                 return 1
 
             elif user_input == "9":
                 clr_scr()
                 DebugMsg("error", "Closing", True, True)
+
                 return 9
             
-            else:
-                DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
-                DebugInput("tip", "Type Enter to continue...", False, True)
-                render_menu_header(1)
-                write_current_check_mode(1, True, isGenerator)
-                list_options(1, True)
-                continue
+            logger.debug("Invalid input: 'retry_query'.")
+            DebugMsg("error", "Invalid input: Please type a listed option!", False, True)
+            DebugInput("tip", "Type Enter to continue...", False, True)
+            render_menu_header(1)
+            write_current_check_mode(1, True, isGenerator)
+            list_options(1, True)
+            continue
 
     except Exception:
+        logger.warning("Exception found: ", exc_info=True)
         DebugMsg("error", "An unexpected error occured: 'retry_query' in 'menus.py'.", True, True)
+        
         return 0
+

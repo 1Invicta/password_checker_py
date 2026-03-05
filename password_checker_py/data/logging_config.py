@@ -5,13 +5,16 @@
 
 # [ Libraries ] #
 import logging
-from pathlib import Path
-from datetime import datetime
+
+from pathlib import         Path
+from datetime import    datetime
 
 LOGS_DIR = Path(__file__).parent / "logs"
-print(LOGS_DIR)
 
-def setup_logging(log_to_file: bool=False, log_dir: str | Path = LOGS_DIR, level=logging.INFO):
+
+def setup_logging( log_to_file: bool=False, log_dir: str | Path = LOGS_DIR, level=logging.INFO ):
+    """Sets up logging system (log file system I/O)."""
+
     root_logger = logging.getLogger()
     root_logger.setLevel(level)
 
@@ -25,7 +28,7 @@ def setup_logging(log_to_file: bool=False, log_dir: str | Path = LOGS_DIR, level
         log_dir.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y_%m_%d_%H%M%S")
-        logfile = log_dir / f"password_checker_py_{timestamp}.log"
+        logfile = log_dir / f"pass_chk_py_{timestamp}.log"
 
         file_handler = logging.FileHandler(logfile, encoding="utf-8")
         file_handler.setFormatter(formatter)
