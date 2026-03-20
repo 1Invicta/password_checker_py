@@ -34,8 +34,9 @@
 
 # [Next Update] -------------------------------------------- #
 # < --- [CORE] --- >                                         #
-# /cli.py/         add multiple password check               #
-# /ALL/            consider prefix naming convention         #
+# /changelog.py/   store updates in .json instead of .py and #
+#                  read/update changelog using custom        #
+#                  functions                                 #
 
 # ========================================================== #
 
@@ -54,7 +55,7 @@ import      logging
 logger = logging.getLogger(__name__)
 
 # [ Modules ] #
-from .core.cli          import parse_args, new_parse_args, display_user_stats, display_version_info
+from .core.cli          import new_parse_args, display_user_stats, display_version_info
 from .data.stats        import load_stats, atomic_save_stats
 from .core.processing   import process_check, process_generate
 from .core.utils        import DebugMsg, DebugInput, QuitTool, cmd_title, clr_scr, exit_msg
@@ -149,7 +150,6 @@ def main():
     init(autoreset=True)
     
     stats = load_stats()
-    #args = parse_args(user_stats=stats)
     args = new_parse_args(user_stats=stats)
 
     if args.command == "check":

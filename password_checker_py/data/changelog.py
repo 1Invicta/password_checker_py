@@ -199,5 +199,16 @@ changelog = [
             ("fix", "Reformatted codebase for readability and increased performance"),
             ("fix", "Improved README file for documentation")
         ]
+    },
+    {
+        # hotfix + plan to improve changelog storing and updating system
+        "date": "20/03/2026",
+        "version": "0.4.1",
+        "changes":
+        [
+            ("added", "Added '__init__.py' file for relative imports on older python versions"),
+            ("fix", "Fixed stats saving bug"),
+            ("info", "The next update will fix and improve the changelog system!")
+        ]
     }
 ]
